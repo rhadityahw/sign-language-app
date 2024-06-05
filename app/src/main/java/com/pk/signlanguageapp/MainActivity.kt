@@ -1,20 +1,61 @@
 package com.pk.signlanguageapp
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import com.pk.signlanguageapp.account.AccountFragment
+import com.pk.signlanguageapp.databinding.ActivityMainBinding
+import com.pk.signlanguageapp.dictionary.DictionaryFragment
+import com.pk.signlanguageapp.home.HomeFragment
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var selectedFragment: Fragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.bottomNavigation.inflateMenu(R.menu.menu_bot_nav)
+        binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_home -> {
+                    switchFragment(HomeFragment())
+                    true
+                }
+                R.id.action_dictionary -> {
+                    switchFragment(DictionaryFragment())
+                    true
+                }
+                R.id.action_account -> {
+                    switchFragment(AccountFragment())
+                    true
+                }
+                else -> false
+            }
         }
+
+        if (savedInstanceState != null) {
+            selectedFragment = supportFragmentManager.getFragment(savedInstanceState, "selectedFragment") ?: HomeFragment()
+        } else {
+            selectedFragment = HomeFragment()
+        }
+
+        switchFragment(selectedFragment)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (selectedFragment.isAdded) {
+            supportFragmentManager.putFragment(outState, "selectedFragment", selectedFragment)
+        }
+    }
+
+    private fun switchFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.nav_host_fragment, fragment)
+            .commit()
     }
 }
