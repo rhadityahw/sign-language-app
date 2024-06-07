@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.pk.signlanguageapp.home.HomeFragment"
+        android:name="com.pk.signlanguageapp.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/dictionaryFragment"
-        android:name="com.pk.signlanguageapp.dictionary.DictionaryFragment"
+        android:name="com.pk.signlanguageapp.ui.dictionary.DictionaryFragment"
         android:label="fragment_dictionary"
         tools:layout="@layout/fragment_dictionary" />
     <fragment
         android:id="@+id/accountFragment"
-        android:name="com.pk.signlanguageapp.account.AccountFragment"
+        android:name="com.pk.signlanguageapp.ui.account.AccountFragment"
         android:label="fragment_account"
         tools:layout="@layout/fragment_account" />
 </navigation>

@@ -3,10 +3,10 @@ package com.pk.signlanguageapp
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.pk.signlanguageapp.account.AccountFragment
+import com.pk.signlanguageapp.ui.account.AccountFragment
 import com.pk.signlanguageapp.databinding.ActivityMainBinding
-import com.pk.signlanguageapp.dictionary.DictionaryFragment
-import com.pk.signlanguageapp.home.HomeFragment
+import com.pk.signlanguageapp.ui.dictionary.DictionaryFragment
+import com.pk.signlanguageapp.ui.home.HomeFragment
 
 class MainActivity : AppCompatActivity() {
 

@@ -2,4 +2,7 @@
     <string name="app_name">Sign Language App</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="invalid_email">Format email is invalid!</string>
+    <string name="min_length_char">Minimal Length %1$d characters</string>
 </resources>
