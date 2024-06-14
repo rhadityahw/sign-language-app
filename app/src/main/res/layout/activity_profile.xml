@@ -5,47 +5,62 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity">
+    tools:context=".ui.account.ProfileActivity">
+
+    <ImageView
+        android:id="@+id/arrow_back"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/purple" />
 
     <TextView
-        android:id="@+id/text_signup"
+        android:id="@+id/text_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign Up"
-        android:textSize="24sp"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="25dp"
+        android:layout_marginStart="12dp"
         android:fontFamily="@font/poppins_semibold"
+        android:text="Profile"
         android:textColor="@color/purple"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@id/arrow_back"
+        app:layout_constraintTop_toTopOf="@id/arrow_back" />
 
-    <TextView
-        android:id="@+id/text_welcome_back"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Create New Account"
-        android:textSize="48sp"
-        android:layout_marginTop="60dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="50dp"
-        android:fontFamily="@font/poppins_semibold"
-        app:layout_constraintTop_toBottomOf="@id/text_signup"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guidelineProfile"
+        app:layout_constraintTop_toBottomOf="@id/text_title">
 
-    <TextView
-        android:id="@+id/text_sign_in_desc"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Sign up to join"
-        android:textSize="20sp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="50dp"
-        android:fontFamily="@font/poppins_regular"
-        app:layout_constraintTop_toBottomOf="@id/text_welcome_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            tools:src="@tools:sample/avatars"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="150dp"
+            android:layout_marginTop="110dp"
+            android:layout_marginEnd="40dp"
+            android:src="@drawable/ic_add_circle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/purple" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nameEditTextLayout"
@@ -55,7 +70,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        app:layout_constraintTop_toBottomOf="@id/text_sign_in_desc"
+        app:layout_constraintTop_toBottomOf="@id/guidelineProfile"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:startIconDrawable="@drawable/ic_person">
@@ -124,46 +139,22 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/btn_register"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginTop="25dp"
+        android:id="@+id/btn_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:minHeight="50dp"
+        android:text="OK"
+        android:fontFamily="@font/poppins_semibold"
         android:backgroundTint="@color/purple"
-        android:text="Register"
-        app:cornerRadius="15dp"
-        app:layout_constraintTop_toBottomOf="@id/passwordEditTextLayout"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/btn_register"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp">
-
-        <TextView
-            android:id="@+id/text_create_new_account"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Have an account?"
-            android:fontFamily="@font/poppins_regular"
-            android:textColor="@color/purple"
-            android:layout_marginTop="25dp"/>
-
-        <TextView
-            android:id="@+id/tv_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:layout_marginTop="25dp"
-            android:text="Sign In"/>
-
-    </LinearLayout>
+        app:layout_constraintGuide_begin="280dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

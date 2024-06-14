@@ -60,7 +60,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:startIconDrawable="@drawable/ic_email">
 
-        <com.pk.signlanguageapp.customview.CustomEmail
+        <com.pk.signlanguageapp.ui.customview.CustomEmail
             android:id="@+id/ed_login_email"
             android:hint="Email"
             android:autofillHints="emailAddress"
@@ -86,8 +86,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:startIconDrawable="@drawable/ic_lock">
 
-        <com.pk.signlanguageapp.customview.CustomPassword
-            android:id="@+id/ed_register_password"
+        <com.pk.signlanguageapp.ui.customview.CustomPassword
+            android:id="@+id/ed_login_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"

@@ -1,25 +1,79 @@
 package com.pk.signlanguageapp
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.pk.signlanguageapp.databinding.ActivityRegisterBinding
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
+    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        firebaseAuth= FirebaseAuth.getInstance()
+
+        register()
+        moveToLogin()
+        }
+
+    private fun moveToLogin() {
         binding.tvLogin.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
     }
+
+    private fun register() {
+        binding.btnRegister.setOnClickListener {
+            val username = binding.edRegisterUsername.text.toString()
+            val email = binding.edRegisterEmail.text.toString()
+            val password = binding.edRegisterPassword.text.toString()
+
+            when {
+                username.isEmpty() -> {
+                    binding.edRegisterUsername.error = resources.getString(R.string.message_validation, "name")
+                }
+                email.isEmpty() -> {
+                    binding.edRegisterEmail.error = resources.getString(R.string.message_validation, "email")
+                }
+                password.isEmpty() -> {
+                    binding.edRegisterPassword.error = resources.getString(R.string.message_validation, "password")
+                }
+                else -> {
+                    if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()){
+                        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(this) { task ->
+                            if (task.isSuccessful){
+                                AlertDialog.Builder(this@RegisterActivity).apply {
+                                    setTitle("Welcome!")
+                                    setMessage("Your account successfully created!")
+                                    setPositiveButton("Next") { _, _ ->
+                                        startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
+                                        finish()
+                                    }
+                                    create()
+                                    show()
+                                }
+                            }else{
+                                Toast.makeText(this@RegisterActivity, "Please Try Again", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    }else{
+                        Toast.makeText(this, resources.getString(R.string.signup_error), Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+    }
+}
+
 }
