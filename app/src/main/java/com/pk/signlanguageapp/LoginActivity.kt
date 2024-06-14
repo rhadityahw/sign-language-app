@@ -44,8 +44,6 @@ class LoginActivity : AppCompatActivity() {
                             if (task.isSuccessful){
                                 startActivity(Intent(this, MainActivity::class.java))
                                 finish()
-//                            val userId = firebaseAuth.currentUser?.uid
-//                            Toast.makeText(this, userId.toString(), Toast.LENGTH_SHORT).show()
                             }else{
                                 Toast.makeText(this@LoginActivity, "Please Try Again", Toast.LENGTH_SHORT)
                                     .show()

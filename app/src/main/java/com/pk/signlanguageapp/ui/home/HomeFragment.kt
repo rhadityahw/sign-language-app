@@ -6,6 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.pk.signlanguageapp.R
 import com.pk.signlanguageapp.databinding.FragmentAccountBinding
 import com.pk.signlanguageapp.databinding.FragmentHomeBinding
@@ -15,6 +18,11 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding
+
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firebaseFirestore: FirebaseFirestore
+    private lateinit var documentReference: DocumentReference
+    private lateinit var userId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,6 +35,19 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        firebaseAuth= FirebaseAuth.getInstance()
+        firebaseFirestore = FirebaseFirestore.getInstance()
+
+        userId = firebaseAuth.currentUser!!.uid
+
+        documentReference = firebaseFirestore.collection("users").document(userId)
+        documentReference.addSnapshotListener { documentSnapshot, _ ->
+            binding?.apply {
+                tvUsername.text = documentSnapshot?.getString("username")
+            }
+        }
+
         startCameraX()
     }
 

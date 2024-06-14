@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.pk.signlanguageapp.R
 import com.pk.signlanguageapp.databinding.FragmentAccountBinding
 
@@ -17,6 +19,9 @@ class AccountFragment : Fragment() {
     private val binding get() = _binding
 
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firebaseFirestore: FirebaseFirestore
+    private lateinit var documentReference: DocumentReference
+    private lateinit var userId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +36,17 @@ class AccountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         firebaseAuth = FirebaseAuth.getInstance()
+        firebaseFirestore = FirebaseFirestore.getInstance()
+
+        userId = firebaseAuth.currentUser!!.uid
+
+        documentReference = firebaseFirestore.collection("users").document(userId)
+        documentReference.addSnapshotListener { documentSnapshot, _ ->
+            binding?.apply {
+                tvUsernameAccount.text = documentSnapshot?.getString("username")
+                tvEmailAccount.text = documentSnapshot?.getString("email")
+            }
+        }
 
         logout()
         setBadgeClick()

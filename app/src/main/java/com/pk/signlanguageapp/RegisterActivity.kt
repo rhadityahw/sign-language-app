@@ -3,15 +3,21 @@ package com.pk.signlanguageapp
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.common.internal.Objects
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.pk.signlanguageapp.databinding.ActivityRegisterBinding
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firebaseFirestore: FirebaseFirestore
+    private lateinit var documentReference: DocumentReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,6 +25,7 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         firebaseAuth= FirebaseAuth.getInstance()
+        firebaseFirestore = FirebaseFirestore.getInstance()
 
         register()
         moveToLogin()
@@ -52,28 +59,34 @@ class RegisterActivity : AppCompatActivity() {
                         firebaseAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(this) { task ->
                             if (task.isSuccessful){
-                                AlertDialog.Builder(this@RegisterActivity).apply {
-                                    setTitle("Welcome!")
-                                    setMessage("Your account successfully created!")
-                                    setPositiveButton("Next") { _, _ ->
-                                        startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
-                                        finish()
-                                    }
-                                    create()
-                                    show()
+                                val userId = firebaseAuth.currentUser!!.uid
+                                documentReference = firebaseFirestore.collection("users").document(userId)
+                                val user = mutableMapOf<String, Any>()
+                                user["username"] = username
+                                user["email"] = email
+                                documentReference.set(user).addOnSuccessListener {
+                                    Log.d(TAG, "onSuccess: user profile is created for $userId")
+                                }.addOnFailureListener { e: Exception ->
+                                    Log.e(TAG, "onFailure: $e")
                                 }
-                            }else{
+                                startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
+                                finish()
+                            } else {
                                 Toast.makeText(this@RegisterActivity, "Please Try Again", Toast.LENGTH_SHORT)
                                     .show()
                             }
                         }
-                    }else{
+                    } else {
                         Toast.makeText(this, resources.getString(R.string.signup_error), Toast.LENGTH_SHORT)
                             .show()
                     }
                 }
             }
+        }
     }
-}
+
+    companion object {
+        const val TAG = "RegisterActivity"
+    }
 
 }

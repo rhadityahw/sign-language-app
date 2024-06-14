@@ -3,15 +3,11 @@ package com.pk.signlanguageapp.ui.camerax
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.pk.signlanguageapp.R
 import com.pk.signlanguageapp.databinding.ActivityCameraBinding
 
 class CameraActivity : AppCompatActivity() {
