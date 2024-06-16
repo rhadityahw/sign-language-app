@@ -39,6 +39,7 @@
         app:layout_constraintTop_toBottomOf="@id/text_title">
 
         <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_avatar"
             android:layout_width="150dp"
             android:layout_height="150dp"
             tools:src="@tools:sample/avatars"
@@ -48,6 +49,7 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ImageView
+            android:id="@+id/btn_change_avatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="150dp"
@@ -76,7 +78,7 @@
         app:startIconDrawable="@drawable/ic_person">
 
         <com.pk.signlanguageapp.ui.customview.CustomUsername
-            android:id="@+id/ed_register_username"
+            android:id="@+id/ed_username"
             android:hint="Username"
             android:autofillHints="emailAddress"
             android:minHeight="50dp"
@@ -102,7 +104,7 @@
         app:startIconDrawable="@drawable/ic_email">
 
         <com.pk.signlanguageapp.ui.customview.CustomEmail
-            android:id="@+id/ed_register_email"
+            android:id="@+id/ed_email"
             android:hint="Email"
             android:autofillHints="emailAddress"
             android:minHeight="50dp"

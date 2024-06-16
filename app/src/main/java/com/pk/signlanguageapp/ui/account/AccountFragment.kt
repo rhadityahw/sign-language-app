@@ -10,8 +10,11 @@ import android.view.ViewGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.pk.signlanguageapp.R
 import com.pk.signlanguageapp.databinding.FragmentAccountBinding
+import com.squareup.picasso.Picasso
 
 class AccountFragment : Fragment() {
 
@@ -22,6 +25,8 @@ class AccountFragment : Fragment() {
     private lateinit var firebaseFirestore: FirebaseFirestore
     private lateinit var documentReference: DocumentReference
     private lateinit var userId: String
+
+    private lateinit var storageReference: StorageReference
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,8 +42,14 @@ class AccountFragment : Fragment() {
 
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseFirestore = FirebaseFirestore.getInstance()
+        storageReference = FirebaseStorage.getInstance().getReference()
 
         userId = firebaseAuth.currentUser!!.uid
+
+        val profileRef = storageReference.child( "users/"+ firebaseAuth.currentUser!!.uid +"profile.jpg")
+        profileRef.downloadUrl.addOnSuccessListener { uri ->
+            Picasso.get().load(uri).into(binding?.ivAvatarAccount)
+        }
 
         documentReference = firebaseFirestore.collection("users").document(userId)
         documentReference.addSnapshotListener { documentSnapshot, _ ->
