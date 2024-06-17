@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.pk.signlanguageapp.R
+import com.pk.signlanguageapp.SpeechActivity
 import com.pk.signlanguageapp.databinding.FragmentAccountBinding
 import com.pk.signlanguageapp.databinding.FragmentHomeBinding
 import com.pk.signlanguageapp.ui.camerax.CameraActivity
@@ -48,12 +49,20 @@ class HomeFragment : Fragment() {
             }
         }
 
+        startSpeechRecognition()
         startCameraX()
     }
 
     private fun startCameraX() {
         binding?.cvVideoToText?.setOnClickListener {
             val intent = Intent(activity, CameraActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun startSpeechRecognition() {
+        binding?.cvVoiceToText?.setOnClickListener {
+            val intent = Intent(activity, SpeechActivity::class.java)
             startActivity(intent)
         }
     }
