@@ -27,12 +27,12 @@ class CustomPassword: CustomUsername {
                 // Do nothing.
             }
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                // Do nothing.
+            }
+            override fun afterTextChanged(s: Editable) {
                 if (text?.length in 1..7){
                     error = resources.getString(R.string.min_length_char, 8)
                 }
-            }
-            override fun afterTextChanged(s: Editable) {
-                // Do nothing.
             }
         })
     }

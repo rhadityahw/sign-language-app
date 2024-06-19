@@ -1,4 +1,4 @@
-package com.pk.signlanguageapp
+package com.pk.signlanguageapp.ui.speech
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -12,7 +12,6 @@ import android.view.MotionEvent
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.pk.signlanguageapp.databinding.ActivitySpeechBinding
 import java.util.Locale
@@ -111,6 +110,4 @@ class SpeechActivity : AppCompatActivity() {
             allowPermission.launch(android.Manifest.permission.RECORD_AUDIO)
         }
     }
-
-
 }

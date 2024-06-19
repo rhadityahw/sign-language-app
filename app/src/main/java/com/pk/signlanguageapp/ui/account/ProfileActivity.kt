@@ -5,22 +5,16 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.pk.signlanguageapp.MainActivity
-import com.pk.signlanguageapp.R
 import com.pk.signlanguageapp.databinding.ActivityProfileBinding
 import com.squareup.picasso.Picasso
 
@@ -29,7 +23,6 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firebaseFirestore: FirebaseFirestore
-    private lateinit var documentReference: DocumentReference
     private lateinit var userId: String
     private lateinit var user: FirebaseUser
 
@@ -55,15 +48,15 @@ class ProfileActivity : AppCompatActivity() {
             Picasso.get().load(uri).into(binding.ivAvatar)
         }
 
-        documentReference = firebaseFirestore.collection("users").document(userId)
-        documentReference.addSnapshotListener(this@ProfileActivity, EventListener { documentSnapshot, _ ->
-            binding.apply {
-                if (documentSnapshot != null) {
-                    edUsername.setText(documentSnapshot.getString("username"))
-                    edEmail.setText(documentSnapshot.getString("email"))
+        firebaseFirestore.collection("users").document(userId)
+            .addSnapshotListener(this@ProfileActivity, EventListener { documentSnapshot, _ ->
+                binding.apply {
+                    if (documentSnapshot != null) {
+                        edUsername.setText(documentSnapshot.getString("username"))
+                        edEmail.setText(documentSnapshot.getString("email"))
+                    }
                 }
-            }
-        })
+            })
 
         binding.btnChangeAvatar.setOnClickListener {
             uploadPhotoFromGallery()
@@ -93,7 +86,7 @@ class ProfileActivity : AppCompatActivity() {
                         val edited = mutableMapOf<String, Any>()
                         edited["username"] = edUsername.text.toString()
                         edited["email"] = email
-                        documentReference.update(edited)
+                        firebaseFirestore.collection("users").document(userId).update(edited)
                         Log.d(TAG, "Profile updated")
                     }
                 }

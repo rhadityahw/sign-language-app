@@ -8,6 +8,19 @@
     <string name="message_validation">Enter your %1$s</string>
     <string name="login_error">Cannot Login, please check again!</string>
     <string name="signup_error">Cannot Signup, please check again!</string>
-    <string name="rekening_error">Cannot Add Rekening, please check again!</string>
     <string name="logout">Logout</string>
+
+    <string name="home">Home</string>
+    <string name="account">Account</string>
+    <string name="halo">Halo,</string>
+    <string name="john_doe">John Doe</string>
+    <string name="ayo_jelajahi_dunia_tuli_bersama_kami">Ayo jelajahi dunia tuli bersama kami!</string>
+    <string name="john_doe_email">johndoe@gmail.com</string>
+    <string name="faq">FAQ</string>
+    <string name="hubungi_kami">Hubungi Kami</string>
+    <string name="ketentuan_layanan">Ketentuan Layanan</string>
+    <string name="mode_gelap">Mode Gelap</string>
+    <string name="notifikasi">Notifikasi</string>
+    <string name="pengaturan">Pengaturan</string>
+    <string name="tentang_kami">Tentang Kami</string>
 </resources>

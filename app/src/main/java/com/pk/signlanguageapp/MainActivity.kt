@@ -36,10 +36,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if (!allPermissionsGranted()) {
-            requestPermissionLauncher.launch(REQUIRED_PERMISSION)
-        }
-
         binding.bottomNavigation.inflateMenu(R.menu.menu_bot_nav)
         binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -87,23 +83,6 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.nav_host_fragment, fragment)
             .commit()
     }
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                Toast.makeText(this, "Permission request granted", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(this, "Permission request denied", Toast.LENGTH_LONG).show()
-            }
-        }
-
-    private fun allPermissionsGranted() =
-        ContextCompat.checkSelfPermission(
-            this,
-            REQUIRED_PERMISSION
-        ) == PackageManager.PERMISSION_GRANTED
 
     override fun onStart() {
         super.onStart()

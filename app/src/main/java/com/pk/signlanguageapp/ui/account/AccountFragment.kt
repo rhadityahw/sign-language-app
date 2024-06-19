@@ -23,7 +23,6 @@ class AccountFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firebaseFirestore: FirebaseFirestore
-    private lateinit var documentReference: DocumentReference
     private lateinit var userId: String
 
     private lateinit var storageReference: StorageReference
@@ -51,8 +50,7 @@ class AccountFragment : Fragment() {
             Picasso.get().load(uri).into(binding?.ivAvatarAccount)
         }
 
-        documentReference = firebaseFirestore.collection("users").document(userId)
-        documentReference.addSnapshotListener { documentSnapshot, _ ->
+        firebaseFirestore.collection("users").document(userId).addSnapshotListener { documentSnapshot, _ ->
             binding?.apply {
                 tvUsernameAccount.text = documentSnapshot?.getString("username")
                 tvEmailAccount.text = documentSnapshot?.getString("email")
@@ -60,18 +58,11 @@ class AccountFragment : Fragment() {
         }
 
         logout()
-        setBadgeClick()
-        setProfileClick()
+        profileClick()
     }
 
-    private fun setBadgeClick() {
-        binding?.cvBadgeAccount?.setOnClickListener {
-            val intent = Intent(activity, BadgeActivity::class.java)
-            startActivity(intent)
-        }
-    }
 
-    private fun setProfileClick() {
+    private fun profileClick() {
         binding?.cvProfile?.setOnClickListener {
             val intent = Intent(activity, ProfileActivity::class.java)
             startActivity(intent)
@@ -79,7 +70,7 @@ class AccountFragment : Fragment() {
     }
 
     private fun logout() {
-        binding?.btnLogout?.setOnClickListener {
+        binding?.cvLogout?.setOnClickListener {
             AlertDialog.Builder(requireActivity()).apply {
                 setTitle("Peringatan!")
                 setMessage("Apakah anda yakin ingin keluar?")

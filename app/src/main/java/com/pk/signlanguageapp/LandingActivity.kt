@@ -2,12 +2,9 @@ package com.pk.signlanguageapp
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.google.firebase.auth.FirebaseAuth
 import com.pk.signlanguageapp.databinding.ActivityLandingBinding
+import com.pk.signlanguageapp.ui.auth.LoginActivity
 
 class LandingActivity : AppCompatActivity() {
 

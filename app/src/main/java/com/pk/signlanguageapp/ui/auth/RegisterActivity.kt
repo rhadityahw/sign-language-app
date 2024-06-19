@@ -1,15 +1,13 @@
-package com.pk.signlanguageapp
+package com.pk.signlanguageapp.ui.auth
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.common.internal.Objects
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.pk.signlanguageapp.R
 import com.pk.signlanguageapp.databinding.ActivityRegisterBinding
 
 class RegisterActivity : AppCompatActivity() {
@@ -17,7 +15,6 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firebaseFirestore: FirebaseFirestore
-    private lateinit var documentReference: DocumentReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,15 +57,15 @@ class RegisterActivity : AppCompatActivity() {
                             .addOnCompleteListener(this) { task ->
                             if (task.isSuccessful){
                                 val userId = firebaseAuth.currentUser!!.uid
-                                documentReference = firebaseFirestore.collection("users").document(userId)
-                                val user = mutableMapOf<String, Any>()
-                                user["username"] = username
-                                user["email"] = email
-                                documentReference.set(user).addOnSuccessListener {
-                                    Log.d(TAG, "onSuccess: user profile is created for $userId")
-                                }.addOnFailureListener { e: Exception ->
-                                    Log.e(TAG, "onFailure: $e")
-                                }
+                                val userData = mutableMapOf<String, Any>()
+                                userData["username"] = username
+                                userData["email"] = email
+                                firebaseFirestore.collection("users").document(userId).set(userData)
+                                    .addOnSuccessListener {
+                                        Log.d(TAG, "onSuccess: user profile is created for $userId")
+                                    }.addOnFailureListener { e: Exception ->
+                                        Log.e(TAG, "onFailure: $e")
+                                    }
                                 startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
                                 finish()
                             } else {

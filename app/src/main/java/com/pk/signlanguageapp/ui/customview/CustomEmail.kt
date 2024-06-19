@@ -31,13 +31,13 @@ class CustomEmail: CustomUsername {
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (!isValidEmail(text.toString())) {
-                        error = resources.getString(R.string.invalid_email)
-                }
+                // Do nothing.
             }
 
             override fun afterTextChanged(s: Editable) {
-                // Do nothing.
+                if (!isValidEmail(text.toString())) {
+                    error = resources.getString(R.string.invalid_email)
+                }
             }
         })
     }

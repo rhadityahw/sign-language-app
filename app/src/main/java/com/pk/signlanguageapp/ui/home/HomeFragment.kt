@@ -9,9 +9,7 @@ import android.view.ViewGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.pk.signlanguageapp.R
-import com.pk.signlanguageapp.SpeechActivity
-import com.pk.signlanguageapp.databinding.FragmentAccountBinding
+import com.pk.signlanguageapp.ui.speech.SpeechActivity
 import com.pk.signlanguageapp.databinding.FragmentHomeBinding
 import com.pk.signlanguageapp.ui.camerax.CameraActivity
 
@@ -42,8 +40,7 @@ class HomeFragment : Fragment() {
 
         userId = firebaseAuth.currentUser!!.uid
 
-        documentReference = firebaseFirestore.collection("users").document(userId)
-        documentReference.addSnapshotListener { documentSnapshot, _ ->
+        firebaseFirestore.collection("users").document(userId).addSnapshotListener { documentSnapshot, _ ->
             binding?.apply {
                 tvUsername.text = documentSnapshot?.getString("username")
             }
