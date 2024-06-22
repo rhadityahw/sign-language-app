@@ -63,6 +63,8 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.3.1")
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
+    implementation("com.google.mediapipe:tasks-vision:0.10.14")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
