@@ -7,51 +7,55 @@
     android:layout_height="match_parent"
     tools:context=".LandingActivity">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iv_logo"
-        android:layout_width="235dp"
-        android:layout_height="235dp"
-        tools:src="@tools:sample/avatars"
-        android:layout_marginTop="100dp"
+    <TextView
+        android:id="@+id/textAppName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:text="@string/app_name"
+        android:textSize="42sp"
+        android:textColor="@color/purple_500"
+        android:fontFamily="@font/poppins_regular"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageAppOnBoarding"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="30dp"
+        tools:src="@tools:sample/avatars"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textAppName"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/text_appname"
-        android:layout_width="wrap_content"
+        android:id="@+id/textAppSlogan"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="Gestura"
-        android:textSize="32sp"
+        android:layout_marginTop="45dp"
+        android:layout_marginHorizontal="35dp"
+        android:text="@string/app_slogan"
+        android:textAlignment="center"
+        android:textSize="28sp"
         android:fontFamily="@font/poppins_semibold"
-        app:layout_constraintTop_toBottomOf="@id/iv_logo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <TextView
-        android:id="@+id/text_slogan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Unmute your friend"
-        android:textSize="20sp"
-        android:fontFamily="@font/poppins_regular"
-        app:layout_constraintTop_toBottomOf="@id/text_appname"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/imageAppOnBoarding"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/btn_start"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="Mulai"
-        android:textSize="18sp"
+        android:id="@+id/btnStart"
+        android:layout_width="0dp"
+        android:layout_height="65dp"
+        android:layout_marginHorizontal="35dp"
+        android:layout_marginBottom="60dp"
+        android:text="@string/get_started"
+        android:textSize="16sp"
+        android:textAllCaps="true"
         android:fontFamily="@font/poppins_semibold"
-        android:layout_marginTop="80dp"
-        android:layout_marginHorizontal="100dp"
-        android:backgroundTint="@color/purple"
-        app:layout_constraintTop_toBottomOf="@id/text_slogan"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

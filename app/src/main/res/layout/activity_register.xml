@@ -8,44 +8,28 @@
     tools:context=".ui.auth.RegisterActivity">
 
     <TextView
-        android:id="@+id/text_signup"
+        android:id="@+id/textCreateAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign Up"
-        android:textSize="24sp"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="25dp"
-        android:fontFamily="@font/poppins_semibold"
-        android:textColor="@color/purple"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/text_welcome_back"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Create New Account"
-        android:textSize="48sp"
+        android:layout_marginHorizontal="25dp"
         android:layout_marginTop="60dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="50dp"
+        android:text="@string/create_account"
+        android:textSize="52sp"
         android:fontFamily="@font/poppins_semibold"
-        app:layout_constraintTop_toBottomOf="@id/text_signup"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_sign_in_desc"
-        android:layout_width="0dp"
+        android:id="@+id/textSignUpSlogan"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign up to join"
-        android:textSize="20sp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/sign_up_to_join_us"
+        android:textSize="24sp"
+        android:textColor="@color/gray"
         android:fontFamily="@font/poppins_regular"
-        app:layout_constraintTop_toBottomOf="@id/text_welcome_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintStart_toStartOf="@id/textCreateAccount"
+        app:layout_constraintTop_toBottomOf="@id/textCreateAccount" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nameEditTextLayout"
@@ -55,20 +39,19 @@
         android:layout_marginTop="20dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        app:layout_constraintTop_toBottomOf="@id/text_sign_in_desc"
+        app:layout_constraintTop_toBottomOf="@id/textSignUpSlogan"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:startIconDrawable="@drawable/ic_person">
 
         <com.pk.signlanguageapp.ui.customview.CustomUsername
-            android:id="@+id/ed_register_username"
-            android:hint="Username"
-            android:autofillHints="emailAddress"
+            android:id="@+id/edRegisterUsername"
+            android:hint="@string/username"
             android:minHeight="50dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textEmailAddress"
+            android:maxEms="25"
             tools:ignore="SpeakableTextPresentCheck"/>
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -87,8 +70,8 @@
         app:startIconDrawable="@drawable/ic_email">
 
         <com.pk.signlanguageapp.ui.customview.CustomEmail
-            android:id="@+id/ed_register_email"
-            android:hint="Email"
+            android:id="@+id/edRegisterEmail"
+            android:hint="@string/email"
             android:autofillHints="emailAddress"
             android:minHeight="50dp"
             android:layout_width="match_parent"
@@ -113,10 +96,10 @@
         app:startIconDrawable="@drawable/ic_lock">
 
         <com.pk.signlanguageapp.ui.customview.CustomPassword
-            android:id="@+id/ed_register_password"
+            android:id="@+id/edRegisterPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/password"
             android:ems="10"
             android:minHeight="50dp"
             android:inputType="textPassword"
@@ -124,45 +107,47 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/btn_register"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginTop="25dp"
-        android:backgroundTint="@color/purple"
-        android:text="Register"
-        app:cornerRadius="15dp"
-        app:layout_constraintTop_toBottomOf="@id/passwordEditTextLayout"
+        android:id="@+id/btnRegister"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_marginHorizontal="35dp"
+        android:layout_marginBottom="25dp"
+        android:text="@string/register"
+        android:textSize="16sp"
+        android:textAllCaps="true"
+        android:fontFamily="@font/poppins_semibold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/textMoveToSignIn" />
 
     <LinearLayout
+        android:id="@+id/textMoveToSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/btn_register"
+        android:layout_marginBottom="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp">
+        app:layout_constraintBottom_toBottomOf="parent" >
 
         <TextView
-            android:id="@+id/text_create_new_account"
+            android:id="@+id/textHaveAnAccount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Have an account?"
-            android:fontFamily="@font/poppins_regular"
-            android:textColor="@color/purple"
-            android:layout_marginTop="25dp"/>
+            android:text="@string/have_an_acccount"
+            android:textSize="14sp"
+            android:textColor="@color/gray"
+            android:fontFamily="@font/poppins_regular" />
 
         <TextView
-            android:id="@+id/tv_login"
+            android:id="@+id/tvLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:layout_marginTop="25dp"
-            android:text="Sign In"/>
+            android:layout_marginStart="4dp"
+            android:text="@string/sign_in"
+            android:textSize="14sp"
+            android:textColor="@color/purple_500"
+            android:fontFamily="@font/poppins_regular"/>
 
     </LinearLayout>
 

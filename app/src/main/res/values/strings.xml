@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sign Language App</string>
+    <string name="app_name">Gestura</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -23,4 +23,25 @@
     <string name="notifikasi">Notifikasi</string>
     <string name="pengaturan">Pengaturan</string>
     <string name="tentang_kami">Tentang Kami</string>
+
+    <string name="app_slogan">Let\'s overcome \n the language barrier</string>
+    <string name="get_started">Get Started</string>
+    <string name="welcome_back">Welcome \nBack</string>
+    <string name="sign_in_to_continue">Sign in to continue</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="sign_in"><u>Sign In</u></string>
+    <string name="sign_up"><u>Sign Up</u></string>
+    <string name="create_new_account">Create new account?</string>
+    <string name="register">Register</string>
+    <string name="username">Username</string>
+    <string name="sign_up_to_join_us">Sign up to join us</string>
+    <string name="create_account">Create \nAccount</string>
+    <string name="for_you">For you</string>
+    <string name="expand_icon">Expand Icon</string>
+    <string name="have_an_acccount">Have an acccount?</string>
+    <string name="hi">Hi,</string>
+    <string name="huruf">Huruf</string>
+    <string name="kata">Kata</string>
 </resources>

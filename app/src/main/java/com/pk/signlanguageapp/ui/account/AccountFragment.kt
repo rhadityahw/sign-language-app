@@ -47,43 +47,43 @@ class AccountFragment : Fragment() {
 
         val profileRef = storageReference.child( "users/"+ firebaseAuth.currentUser!!.uid +"profile.jpg")
         profileRef.downloadUrl.addOnSuccessListener { uri ->
-            Picasso.get().load(uri).into(binding?.ivAvatarAccount)
+            Picasso.get().load(uri).into(binding?.ivAccountAvatar)
         }
 
         firebaseFirestore.collection("users").document(userId).addSnapshotListener { documentSnapshot, _ ->
             binding?.apply {
-                tvUsernameAccount.text = documentSnapshot?.getString("username")
-                tvEmailAccount.text = documentSnapshot?.getString("email")
+                tvAccountName.text = documentSnapshot?.getString("username")
+                tvAccountEmail.text = documentSnapshot?.getString("email")
             }
         }
 
-        logout()
+//        logout()
         profileClick()
     }
 
 
     private fun profileClick() {
-        binding?.cvProfile?.setOnClickListener {
+        binding?.cvAccountProfile?.setOnClickListener {
             val intent = Intent(activity, ProfileActivity::class.java)
             startActivity(intent)
         }
     }
 
-    private fun logout() {
-        binding?.cvLogout?.setOnClickListener {
-            AlertDialog.Builder(requireActivity()).apply {
-                setTitle("Peringatan!")
-                setMessage("Apakah anda yakin ingin keluar?")
-                setPositiveButton("Ya") { _, _ ->
-                    firebaseAuth.signOut()
-                    activity?.finish()
-                }
-                setNegativeButton("Tidak") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                create()
-                show()
-            }
-        }
-    }
+//    private fun logout() {
+//        binding?.cvLogout?.setOnClickListener {
+//            AlertDialog.Builder(requireActivity()).apply {
+//                setTitle("Peringatan!")
+//                setMessage("Apakah anda yakin ingin keluar?")
+//                setPositiveButton("Ya") { _, _ ->
+//                    firebaseAuth.signOut()
+//                    activity?.finish()
+//                }
+//                setNegativeButton("Tidak") { dialog, _ ->
+//                    dialog.dismiss()
+//                }
+//                create()
+//                show()
+//            }
+//        }
+//    }
 }

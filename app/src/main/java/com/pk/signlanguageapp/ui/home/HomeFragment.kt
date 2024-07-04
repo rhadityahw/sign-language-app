@@ -20,7 +20,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firebaseFirestore: FirebaseFirestore
-    private lateinit var documentReference: DocumentReference
     private lateinit var userId: String
 
     override fun onCreateView(
@@ -42,7 +41,7 @@ class HomeFragment : Fragment() {
 
         firebaseFirestore.collection("users").document(userId).addSnapshotListener { documentSnapshot, _ ->
             binding?.apply {
-                tvUsername.text = documentSnapshot?.getString("username")
+                tvHomeName.text = documentSnapshot?.getString("username")
             }
         }
 
@@ -58,7 +57,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun startSpeechRecognition() {
-        binding?.cvVoiceToText?.setOnClickListener {
+        binding?.cvSpeechToText?.setOnClickListener {
             val intent = Intent(activity, SpeechActivity::class.java)
             startActivity(intent)
         }
