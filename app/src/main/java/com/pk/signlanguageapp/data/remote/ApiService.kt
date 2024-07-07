@@ -14,6 +14,11 @@ interface ApiService {
     @GET("/videos-kata")
     fun getAllKata() : Call<List<DictionaryResponseItem>>
 
+    @GET("/videos-huruf/{nama}")
+    fun getLetterByName(
+        @Path("nama") nama: String
+    ) : Call<List<DetailDictionaryResponseItem>>
+
     @GET("/videos-kata/{nama}")
     fun getWordByName(
         @Path("nama") nama: String

@@ -12,12 +12,18 @@ import com.pk.signlanguageapp.databinding.ItemDictionaryBinding
 class DictionaryAdapter: ListAdapter<DictionaryResponseItem, DictionaryAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     class ViewHolder(private val binding: ItemDictionaryBinding) : RecyclerView.ViewHolder(binding.root) {
+
         fun bind(dictionary: DictionaryResponseItem) {
             binding.apply {
                 tvDictionaryName.text = dictionary.nama
                 btnExpand.setOnClickListener {
                     val intent = Intent(it.context, DetailDictionaryActivity::class.java)
                     intent.putExtra(DetailDictionaryActivity.EXTRA_DICTIONARY, dictionary)
+                    if (dictionary.nama.length == 1) {
+                        intent.putExtra(DetailDictionaryActivity.EXTRA_CATEGORY_DICTIONARY, "Letter")
+                    } else {
+                        intent.putExtra(DetailDictionaryActivity.EXTRA_CATEGORY_DICTIONARY, "Word")
+                    }
                     it.context.startActivity(intent)
                 }
             }

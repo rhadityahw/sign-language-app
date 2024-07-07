@@ -75,6 +75,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
+    implementation("com.google.mediapipe:tasks-text:0.10.14")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

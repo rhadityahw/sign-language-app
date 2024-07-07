@@ -16,7 +16,6 @@ class ViewModelFactory(
         if (modelClass.isAssignableFrom(DictionaryViewModel::class.java)) {
             return DictionaryViewModel(dictionaryRepository) as T
         }
-
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
 

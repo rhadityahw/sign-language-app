@@ -1,100 +1,100 @@
 package com.pk.signlanguageapp.data.repository
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.pk.signlanguageapp.data.remote.ApiService
 import com.pk.signlanguageapp.data.response.DetailDictionaryResponseItem
 import com.pk.signlanguageapp.data.response.DictionaryResponseItem
 import com.pk.signlanguageapp.data.result.Result
 import com.pk.signlanguageapp.utils.AppExecutors
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.await
+import retrofit2.awaitResponse
 
 class DictionaryRepository private constructor(
     private val apiService: ApiService,
     private val appExecutors: AppExecutors
 ){
 
-    fun getAllLetters(): MediatorLiveData<Result<List<DictionaryResponseItem>>> {
-        val result = MediatorLiveData<Result<List<DictionaryResponseItem>>>()
-
-        result.value = Result.Loading
-        val client = apiService.getAllHuruf()
-        client.enqueue(object : Callback<List<DictionaryResponseItem>> {
-            override fun onResponse(call: Call<List<DictionaryResponseItem>>, response: Response<List<DictionaryResponseItem>>) {
-                if (response.isSuccessful) {
-                    val letters = response.body()
-                    Log.d("response", letters.toString())
-                    if (letters != null) {
-                        appExecutors.diskIO.execute {
-                            result.postValue(Result.Success(letters))
-                        }
-                    }
+    fun getAllLetters(): Flow<Result<List<DictionaryResponseItem>>> = flow {
+        emit(Result.Loading)
+        try {
+            val response = apiService.getAllHuruf().awaitResponse()
+            if (response.isSuccessful) {
+                val letters = response.body()
+                if (letters != null) {
+                    emit(Result.Success(letters))
+                } else {
+                    emit(Result.Error("No data found"))
                 }
+            } else {
+                emit(Result.Error("Response not successful"))
             }
-
-            override fun onFailure(call: Call<List<DictionaryResponseItem>>, t: Throwable) {
-                result.value = Result.Error(t.message.toString())
-            }
-        })
-
-        return result
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error"))
+        }
     }
 
-    fun getAllWords(): MediatorLiveData<Result<List<DictionaryResponseItem>>> {
-        val result = MediatorLiveData<Result<List<DictionaryResponseItem>>>()
-
-        result.value = Result.Loading
-        val client = apiService.getAllKata()
-        client.enqueue(object : Callback<List<DictionaryResponseItem>> {
-            override fun onResponse(call: Call<List<DictionaryResponseItem>>, response: Response<List<DictionaryResponseItem>>) {
-                if (response.isSuccessful) {
-                    val words = response.body()
-                    if (words != null) {
-                        appExecutors.diskIO.execute {
-                            result.postValue(Result.Success(words))
-                        }
-                    }
+    fun getAllWords(): Flow<Result<List<DictionaryResponseItem>>> = flow {
+        emit(Result.Loading)
+        try {
+            val response = apiService.getAllKata().awaitResponse()
+            if (response.isSuccessful) {
+                val words = response.body()
+                if (words != null) {
+                    emit(Result.Success(words))
+                } else {
+                    emit(Result.Error("No data found"))
                 }
+            } else {
+                emit(Result.Error("Response not successful"))
             }
-
-            override fun onFailure(call: Call<List<DictionaryResponseItem>>, t: Throwable) {
-                result.value = Result.Error(t.message.toString())
-            }
-
-        })
-
-        return result
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error"))
+        }
     }
 
-    fun getWordByName(nama: String) : MediatorLiveData<Result<List<DetailDictionaryResponseItem>>> {
-        val result = MediatorLiveData<Result<List<DetailDictionaryResponseItem>>>()
-
-        result.value = Result.Loading
-        val client = apiService.getWordByName(nama)
-        client.enqueue(object : Callback<List<DetailDictionaryResponseItem>> {
-            override fun onResponse(
-                call: Call<List<DetailDictionaryResponseItem>>,
-                response: Response<List<DetailDictionaryResponseItem>>
-            ) {
-                if (response.isSuccessful) {
-                    val word = response.body()
-                    if (word != null) {
-                        appExecutors.diskIO.execute {
-                            result.postValue(Result.Success(word))
-                        }
-                    }
+    fun getLetterByName(nama: String) : Flow<Result<List<DetailDictionaryResponseItem>>> = flow {
+        emit(Result.Loading)
+        try {
+            val response = apiService.getLetterByName(nama).awaitResponse()
+            if (response.isSuccessful) {
+                val letter = response.body()
+                if (letter != null) {
+                    emit(Result.Success(letter))
+                } else {
+                    emit(Result.Error("No data found"))
                 }
+            } else {
+                emit(Result.Error("Response not successful"))
             }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error"))
+        }
+    }
 
-            override fun onFailure(call: Call<List<DetailDictionaryResponseItem>>, t: Throwable) {
-                result.value = Result.Error(t.message.toString())
+    suspend fun getWordByName(nama: String): Flow<Result<List<DetailDictionaryResponseItem>>> = flow {
+        emit(Result.Loading)
+        try {
+            val response = apiService.getWordByName(nama).awaitResponse()
+            if (response.isSuccessful) {
+                val word = response.body()
+                if (word != null) {
+                    emit(Result.Success(word))
+                } else {
+                    emit(Result.Error("No data found"))
+                }
+            } else {
+                emit(Result.Error("Response not successful"))
             }
-
-        })
-
-        return result
+        } catch (e: Exception) {
+            emit(Result.Error(e.message ?: "Unknown error"))
+        }
     }
 
     companion object {

@@ -43,7 +43,8 @@ class ListDictionaryActivity : AppCompatActivity() {
 
         when (category) {
             "Letter" -> {
-                viewModel.getAllLetters()?.observe(this) { result ->
+                viewModel.getAllLetters()
+                viewModel.lettersList.observe(this) { result ->
                     if (result != null) {
                         when (result) {
                             is Result.Loading -> {}
@@ -52,34 +53,39 @@ class ListDictionaryActivity : AppCompatActivity() {
                                 dictionaryAdapter.submitList(letters)
                                 binding.rvListDictionary.adapter = dictionaryAdapter
                             }
+
                             is Result.Error -> {
                                 Toast.makeText(
                                     this@ListDictionaryActivity,
                                     "Terjadi kesalahan: ${result.error}",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                Log.d("TAG", result.error)
+                                Log.e("errorLetters", result.error)
                             }
                         }
                     }
                 }
             }
             "Word" -> {
-                viewModel.getAllWords()?.observe(this) { result ->
+                viewModel.getAllWords()
+                viewModel.wordsList.observe(this) { result ->
                     if (result != null) {
                         when (result) {
                             is Result.Loading -> {}
                             is Result.Success -> {
                                 val words = result.data
+                                Log.d("resultWords", words.toString())
                                 dictionaryAdapter.submitList(words)
                                 binding.rvListDictionary.adapter = dictionaryAdapter
                             }
+
                             is Result.Error -> {
                                 Toast.makeText(
                                     this@ListDictionaryActivity,
                                     "Terjadi kesalahan: ${result.error}",
                                     Toast.LENGTH_SHORT
                                 ).show()
+                                Log.e("errorWords", result.error)
                             }
                         }
                     }

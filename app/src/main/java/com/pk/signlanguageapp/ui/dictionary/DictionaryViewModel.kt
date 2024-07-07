@@ -1,6 +1,7 @@
 package com.pk.signlanguageapp.ui.dictionary
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pk.signlanguageapp.data.repository.DictionaryRepository
@@ -11,29 +12,50 @@ import kotlinx.coroutines.launch
 
 class DictionaryViewModel(private val dictionaryRepository: DictionaryRepository) : ViewModel() {
 
-    private var _alphabetsList: LiveData<Result<List<DictionaryResponseItem>>>? = null
+    private val _lettersList = MutableLiveData<Result<List<DictionaryResponseItem>>>()
+    val lettersList: LiveData<Result<List<DictionaryResponseItem>>> get() = _lettersList
 
-    private var _wordsList: LiveData<Result<List<DictionaryResponseItem>>>? = null
+    private val _wordsList = MutableLiveData<Result<List<DictionaryResponseItem>>>()
+    val wordsList: LiveData<Result<List<DictionaryResponseItem>>> get() = _wordsList
 
-    private var _word: LiveData<Result<List<DetailDictionaryResponseItem>>>? = null
+    private val _letter = MutableLiveData<Result<List<DetailDictionaryResponseItem>>>()
+    val letter: LiveData<Result<List<DetailDictionaryResponseItem>>> get() = _letter
 
-    fun getAllLetters(): LiveData<Result<List<DictionaryResponseItem>>>? {
+    private val _word = MutableLiveData<Result<List<DetailDictionaryResponseItem>>>()
+    val word: LiveData<Result<List<DetailDictionaryResponseItem>>> get() = _word
+
+    fun getAllLetters(): LiveData<Result<List<DictionaryResponseItem>>> {
         viewModelScope.launch {
-            _alphabetsList = dictionaryRepository.getAllLetters()
+            dictionaryRepository.getAllLetters().collect { result ->
+                _lettersList.value = result
+            }
         }
-        return _alphabetsList
+        return _lettersList
     }
 
-    fun getAllWords(): LiveData<Result<List<DictionaryResponseItem>>>? {
+    fun getAllWords(): LiveData<Result<List<DictionaryResponseItem>>> {
         viewModelScope.launch {
-            _wordsList = dictionaryRepository.getAllWords()
+            dictionaryRepository.getAllWords().collect { result ->
+                _wordsList.value = result
+            }
         }
         return _wordsList
     }
 
-    fun getWordByName(nama: String): LiveData<Result<List<DetailDictionaryResponseItem>>>? {
+    fun getLetterByName(nama: String): LiveData<Result<List<DetailDictionaryResponseItem>>> {
         viewModelScope.launch {
-            _word = dictionaryRepository.getWordByName(nama)
+            dictionaryRepository.getLetterByName(nama).collect { result ->
+                _letter.value = result
+            }
+        }
+        return _letter
+    }
+
+    fun getWordByName(nama: String): LiveData<Result<List<DetailDictionaryResponseItem>>> {
+        viewModelScope.launch {
+            dictionaryRepository.getWordByName(nama).collect { result ->
+                _word.value = result
+            }
         }
         return _word
     }

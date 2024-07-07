@@ -8,12 +8,17 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.mediapipe.tasks.components.containers.Category
+import com.google.mediapipe.tasks.text.textclassifier.TextClassifierResult
 import com.pk.signlanguageapp.databinding.ActivitySpeechBinding
+import com.pk.signlanguageapp.mediapipe.TextClassifierHelper
 import java.util.Locale
 
 class SpeechActivity : AppCompatActivity() {
@@ -22,6 +27,10 @@ class SpeechActivity : AppCompatActivity() {
     private val speechRecognizer: SpeechRecognizer by lazy {
         SpeechRecognizer.createSpeechRecognizer(this)
     }
+
+    private var resultTextClassifier: Category? = null
+
+    private lateinit var classifierHelper: TextClassifierHelper
 
     private val allowPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -32,6 +41,32 @@ class SpeechActivity : AppCompatActivity() {
                 }
             }
         }
+
+    private val listener = object :
+        TextClassifierHelper.TextResultsListener {
+        override fun onResult(
+            results: TextClassifierResult,
+            inferenceTime: Long
+        ) {
+            runOnUiThread {
+                Log.d("HASIL NLP" , results.classificationResult()
+                    .classifications().first()
+                    .categories().maxByOrNull {
+                        it.score()
+                    }.toString()
+                )
+                resultTextClassifier = results.classificationResult()
+                    .classifications().first()
+                    .categories().maxByOrNull {
+                        it.score()
+                    }
+            }
+        }
+
+        override fun onError(error: String) {
+            Toast.makeText(this@SpeechActivity, error, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,14 +92,22 @@ class SpeechActivity : AppCompatActivity() {
             }
         }
 
+        runOnUiThread {
+            classifierHelper = TextClassifierHelper(
+                context = this@SpeechActivity,
+                listener = listener
+            )
+        }
+
     }
 
     private fun startListen() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ID")
         speechRecognizer.setRecognitionListener(object: RecognitionListener {
             override fun onReadyForSpeech(params: Bundle?) {
+
             }
 
             override fun onBeginningOfSpeech() {
@@ -86,6 +129,26 @@ class SpeechActivity : AppCompatActivity() {
             override fun onResults(bundle: Bundle?) {
                 bundle?.let {
                     val result = it.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                    classifierHelper.classify(result?.get(0).toString())
+
+                    resultTextClassifier?.let { category ->
+                        Log.d("jajdja", category.toString())
+                        val index = category.index()
+                        val score = category.score()
+
+                        if (index == 1 && score > 0.5) {
+                            AlertDialog.Builder(this@SpeechActivity).apply {
+                                setTitle("Peringatan!")
+                                setMessage("Anda terdeteksi melakukan hate speech")
+                                setNegativeButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                create()
+                                show()
+                            }
+                        }
+                    }
+
                     binding.tvTranslate.text = result?.get(0)
                 }
             }

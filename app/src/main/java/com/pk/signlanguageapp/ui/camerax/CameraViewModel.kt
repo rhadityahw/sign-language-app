@@ -17,21 +17,20 @@
 package com.pk.signlanguageapp.ui.camerax
 
 import androidx.lifecycle.ViewModel
-import com.pk.signlanguageapp.mediapipe.HandLandmarkerHelper
+import com.pk.signlanguageapp.mediapipe.GestureRecognizerHelper
 
 /**
  *  This ViewModel is used to store hand landmarker helper settings
  */
 class CameraViewModel : ViewModel() {
 
-    private var _delegate: Int = HandLandmarkerHelper.DELEGATE_CPU
+    private var _delegate: Int = GestureRecognizerHelper.DELEGATE_CPU
     private var _minHandDetectionConfidence: Float =
-        HandLandmarkerHelper.DEFAULT_HAND_DETECTION_CONFIDENCE
-    private var _minHandTrackingConfidence: Float = HandLandmarkerHelper
+        GestureRecognizerHelper.DEFAULT_HAND_DETECTION_CONFIDENCE
+    private var _minHandTrackingConfidence: Float = GestureRecognizerHelper
         .DEFAULT_HAND_TRACKING_CONFIDENCE
-    private var _minHandPresenceConfidence: Float = HandLandmarkerHelper
+    private var _minHandPresenceConfidence: Float = GestureRecognizerHelper
         .DEFAULT_HAND_PRESENCE_CONFIDENCE
-    private var _maxHands: Int = HandLandmarkerHelper.DEFAULT_NUM_HANDS
 
     val currentDelegate: Int get() = _delegate
     val currentMinHandDetectionConfidence: Float
@@ -43,7 +42,6 @@ class CameraViewModel : ViewModel() {
     val currentMinHandPresenceConfidence: Float
         get() =
             _minHandPresenceConfidence
-    val currentMaxHands: Int get() = _maxHands
 
     fun setDelegate(delegate: Int) {
         _delegate = delegate
@@ -57,9 +55,5 @@ class CameraViewModel : ViewModel() {
     }
     fun setMinHandPresenceConfidence(confidence: Float) {
         _minHandPresenceConfidence = confidence
-    }
-
-    fun setMaxHands(maxResults: Int) {
-        _maxHands = maxResults
     }
 }
