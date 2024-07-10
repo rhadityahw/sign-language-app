@@ -41,3 +41,9 @@ data class DetailDictionaryResponseItem(
 	val video: String
 ) : Parcelable
 
+@Parcelize
+data class HateSpeechResponse(
+
+	@field:SerializedName("result")
+	val result: Boolean
+) : Parcelable

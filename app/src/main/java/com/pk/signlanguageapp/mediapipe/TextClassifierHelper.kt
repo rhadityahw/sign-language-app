@@ -36,10 +36,9 @@ class TextClassifierHelper(
     }
 
     fun initClassifier() {
-        val baseOptionsBuilder = BaseOptions.builder()
-            .setModelAssetPath(currentModel)
-
         try {
+            val baseOptionsBuilder = BaseOptions.builder()
+                .setModelAssetPath(MODEL)
             val baseOptions = baseOptionsBuilder.build()
             val optionsBuilder = TextClassifier.TextClassifierOptions.builder()
                 .setBaseOptions(baseOptions)

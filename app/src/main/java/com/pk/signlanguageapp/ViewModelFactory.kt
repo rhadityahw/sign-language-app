@@ -5,16 +5,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.moneo.moneo.di.Injection
 import com.pk.signlanguageapp.data.repository.DictionaryRepository
+import com.pk.signlanguageapp.data.repository.HateSpeechRepository
+import com.pk.signlanguageapp.ui.camerax.CameraViewModel
 import com.pk.signlanguageapp.ui.dictionary.DictionaryViewModel
 
 class ViewModelFactory(
-    private var dictionaryRepository: DictionaryRepository
+    private var dictionaryRepository: DictionaryRepository,
+    private var hateSpeechRepository: HateSpeechRepository
 ): ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DictionaryViewModel::class.java)) {
             return DictionaryViewModel(dictionaryRepository) as T
+        }
+        if (modelClass.isAssignableFrom(CameraViewModel::class.java)) {
+            return CameraViewModel(hateSpeechRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
@@ -26,6 +32,7 @@ class ViewModelFactory(
             instance ?: synchronized(this) {
                 instance ?: ViewModelFactory(
                     Injection.provideDictionaryRepository(context),
+                    Injection.provideHateSpeechRepository(context)
                 )
             }.also { instance = it }
     }

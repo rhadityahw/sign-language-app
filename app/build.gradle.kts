@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.pk.signlanguageapp"
-        minSdk = 29
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -74,8 +74,8 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.3.1")
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
-    implementation("com.google.mediapipe:tasks-vision:0.10.14")
-    implementation("com.google.mediapipe:tasks-text:0.10.14")
+    implementation("com.google.mediapipe:tasks-vision:latest.release")
+    implementation("com.google.mediapipe:tasks-text:latest.release")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

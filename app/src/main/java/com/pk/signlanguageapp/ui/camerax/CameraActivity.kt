@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -20,21 +21,26 @@ import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.text.textclassifier.TextClassifier
 import com.google.mediapipe.tasks.text.textclassifier.TextClassifierResult
 import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.pk.signlanguageapp.ViewModelFactory
+import com.pk.signlanguageapp.data.result.Result
 import com.pk.signlanguageapp.databinding.ActivityCameraBinding
 import com.pk.signlanguageapp.mediapipe.GestureRecognizerHelper
 import com.pk.signlanguageapp.mediapipe.TextClassifierHelper
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.ScheduledThreadPoolExecutor
 
 class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecognizerListener {
 
     private lateinit var binding: ActivityCameraBinding
 
     private lateinit var gestureRecognizerHelper: GestureRecognizerHelper
-//    private lateinit var classifierHelper: TextClassifierHelper
+    private lateinit var classifierHelperHelper: TextClassifierHelper
 
-    private val cameraViewModel: CameraViewModel by viewModels()
+    private val cameraViewModel: CameraViewModel by viewModels {
+        ViewModelFactory.getInstance(this)
+    }
 
     private var cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
@@ -49,17 +55,18 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
     private var lastDetectedGesture = ""
     private var lastDetectedTime = 0L
     private var detectedString = ""
+    private var modalIsOpen = false
 
     // NLP
-    private val currentModel = "model.tflite"
-    private val baseOptionsBuilder = BaseOptions.builder()
-        .setModelAssetPath(currentModel)
-    private val baseOptions = baseOptionsBuilder.build()
-    private val optionsBuilder = TextClassifier.TextClassifierOptions.builder()
-        .setBaseOptions(baseOptions)
-    private val options = optionsBuilder.build()
+//    private val currentModel = "model.tflite"
+//    private val baseOptionsBuilder = BaseOptions.builder()
+//        .setModelAssetPath(currentModel)
+//    private val baseOptions = baseOptionsBuilder.build()
+//    private val optionsBuilder = TextClassifier.TextClassifierOptions.builder()
+//        .setBaseOptions(baseOptions)
+//    private val options = optionsBuilder.build()
 
-    private var textClassifier: TextClassifier? = null
+//    private lateinit var textClassifier: TextClassifier
 
     private val listener = object :
         TextClassifierHelper.TextResultsListener {
@@ -116,8 +123,53 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
         super.onCreate(savedInstanceState)
         binding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val gestureStringLiveData = cameraViewModel.gestureString
+        gestureStringLiveData.observe(this) { data ->
+            detectedString = "dasar babi"
 
-        textClassifier = TextClassifier.createFromOptions(this, options)
+            cameraViewModel.getHateSpeech(detectedString)
+            cameraViewModel.isHate.observe(this) { result ->
+                if (result != null) {
+                    when (result) {
+                        is Result.Loading -> {}
+                        is Result.Success -> {
+                            val hateResult = result.data
+                            Log.d("hateResult", hateResult.toString())
+
+                            if (hateResult.result) {
+                                if (!modalIsOpen){
+                                    AlertDialog.Builder(this).apply {
+                                        setTitle("Peringatan!")
+                                        setMessage("Anda terdeteksi melakukan hate speech")
+                                        setNegativeButton("OK") { dialog, _ ->
+                                            dialog.dismiss()
+                                        }
+                                        create()
+                                        show()
+                                    }
+                                    modalIsOpen = true
+
+                                }
+                                else{
+                                    modalIsOpen = false
+                                }
+                            }
+                        }
+
+                        is Result.Error -> {
+//                            Toast.makeText(
+//                                this@CameraActivity,
+//                                "Terjadi kesalahan: ${result.error}",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+                            Log.e("hateResult", result.error)
+                        }
+                    }
+                }
+            }
+        }
+
+//        textClassifier = TextClassifier.createFromOptions(this, options)
 
         if (!allPermissionsGranted()) {
             requestPermissionLauncher.launch(REQUIRED_PERMISSION)
@@ -131,7 +183,11 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
             setupCamera()
         }
 
-
+//        classifierHelperHelper = TextClassifierHelper(
+//            context = this,
+//            currentModel = "model.tflite",
+//            listener = listener
+//        )
         backgroundExecutor.execute {
             gestureRecognizerHelper = GestureRecognizerHelper(
                 context = this,
@@ -142,11 +198,6 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
                 currentDelegate = cameraViewModel.currentDelegate,
                 gestureRecognizerListener = this
             )
-
-//            classifierHelper = TextClassifierHelper(
-//                context = this@CameraActivity,
-//                listener = listener
-//            )
         }
 
 
@@ -172,6 +223,8 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
 
         val cameraSelector =
             CameraSelector.Builder().requireLensFacing(cameraFacing).build()
+
+
 
         preview = Preview.Builder()
             .build()
@@ -219,7 +272,6 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
                 val startIndex = gestureText.indexOf("\"") + 1
                 val endIndex = gestureText.indexOf("\"", startIndex)
                 val displayName = gestureText.substring(startIndex, endIndex)
-
                 Log.d("HASIL", displayName)
 
                 binding.tvGesture.text = "Gesture: $displayName"
@@ -229,10 +281,11 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
                 if (displayName == lastDetectedGesture) {
                     if (currentTime - lastDetectedTime >= 2) {
                         when (displayName) {
-                            "space" -> detectedString += " "
+                            "space" -> detectedString += "_"
                             "del" -> if (detectedString.isNotEmpty()) detectedString = detectedString.dropLast(1)
                             else -> detectedString += displayName
                         }
+                        cameraViewModel.setGestureString(detectedString)
                         lastDetectedGesture = ""
                     }
                 } else {
@@ -240,23 +293,27 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
                     lastDetectedTime = currentTime
                 }
 
-                detectedString = "dasar babi"
 
-                Log.d("HASIL", detectedString)
 
-//                classifierHelper.classify(detectedString)
 
-                val result = textClassifier?.classify(detectedString)
-                Log.d("TAG", result.toString())
-                val data = result?.classificationResult()?.classifications()
-                if (data?.isNotEmpty() == true) {
-                    Log.d("TAG", data.toString())
-                    val category = data[0].categories()
-                    if (category.isNotEmpty()) {
-                        val name = "${category[0].categoryName()} ${category[0].displayName()}"
-                        Log.d("TAG", name)
-                    }
-                }
+//                executor.execute {
+//                    val results = classifierHelperHelper.classify(detectedString)
+//
+//                    Log.d("hasil NLP: ", results.toString())
+//                }
+//                classifierHelperHelper.classify(detectedString)
+
+//                val result = textClassifier?.classify(detectedString)
+//                Log.d("TAG", result.toString())
+//                val data = result?.classificationResult()?.classifications()
+//                if (data?.isNotEmpty() == true) {
+//                    Log.d("TAG", data.toString())
+//                    val category = data[0].categories()
+//                    if (category.isNotEmpty()) {
+//                        val name = "${category[0].categoryName()} ${category[0].displayName()}"
+//                        Log.d("TAG", name)
+//                    }
+//                }
 
                 binding.tvTranslate.text = detectedString
             }

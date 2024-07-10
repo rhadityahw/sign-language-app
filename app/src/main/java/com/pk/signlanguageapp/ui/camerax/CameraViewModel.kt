@@ -16,13 +16,21 @@
 
 package com.pk.signlanguageapp.ui.camerax
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.pk.signlanguageapp.data.repository.HateSpeechRepository
+import com.pk.signlanguageapp.data.response.DictionaryResponseItem
+import com.pk.signlanguageapp.data.response.HateSpeechResponse
+import com.pk.signlanguageapp.data.result.Result
 import com.pk.signlanguageapp.mediapipe.GestureRecognizerHelper
+import kotlinx.coroutines.launch
 
 /**
  *  This ViewModel is used to store hand landmarker helper settings
  */
-class CameraViewModel : ViewModel() {
+class CameraViewModel(private val hateSpeechRepository: HateSpeechRepository) : ViewModel() {
 
     private var _delegate: Int = GestureRecognizerHelper.DELEGATE_CPU
     private var _minHandDetectionConfidence: Float =
@@ -43,6 +51,13 @@ class CameraViewModel : ViewModel() {
         get() =
             _minHandPresenceConfidence
 
+    private val _gestureString = MutableLiveData<String>()
+    val gestureString: LiveData<String> get() = _gestureString
+
+    fun setGestureString(string: String){
+        _gestureString.value = string
+    }
+
     fun setDelegate(delegate: Int) {
         _delegate = delegate
     }
@@ -55,5 +70,17 @@ class CameraViewModel : ViewModel() {
     }
     fun setMinHandPresenceConfidence(confidence: Float) {
         _minHandPresenceConfidence = confidence
+    }
+
+    private val _isHate = MutableLiveData<Result<HateSpeechResponse>>()
+    val isHate: LiveData<Result<HateSpeechResponse>> get() = _isHate
+
+    fun getHateSpeech(text: String): LiveData<Result<HateSpeechResponse>> {
+        viewModelScope.launch {
+            hateSpeechRepository.getHateSpeech(text).collect { result ->
+                _isHate.value = result
+            }
+        }
+        return _isHate
     }
 }

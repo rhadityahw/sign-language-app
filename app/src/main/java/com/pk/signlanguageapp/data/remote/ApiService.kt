@@ -3,6 +3,7 @@ package com.pk.signlanguageapp.data.remote
 import com.pk.signlanguageapp.data.response.DetailDictionaryResponseItem
 import com.pk.signlanguageapp.data.response.DictionaryResponse
 import com.pk.signlanguageapp.data.response.DictionaryResponseItem
+import com.pk.signlanguageapp.data.response.HateSpeechResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -23,4 +24,9 @@ interface ApiService {
     fun getWordByName(
         @Path("nama") nama: String
     ) : Call<List<DetailDictionaryResponseItem>>
+
+    @GET("hate-speech/{text}")
+    fun getHateSpeech(
+        @Path("text") text: String
+    ) : Call<HateSpeechResponse>
 }
