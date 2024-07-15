@@ -3,18 +3,12 @@ package com.pk.signlanguageapp.ui.dictionary
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.pk.signlanguageapp.R
 import com.pk.signlanguageapp.ViewModelFactory
-import com.pk.signlanguageapp.databinding.ActivityDetailDictionaryBinding
-import com.pk.signlanguageapp.databinding.ActivityListDictionaryBinding
 import com.pk.signlanguageapp.data.result.Result
-import com.pk.signlanguageapp.ui.dictionary.DetailDictionaryActivity.Companion.EXTRA_DICTIONARY
+import com.pk.signlanguageapp.databinding.ActivityListDictionaryBinding
 
 class ListDictionaryActivity : AppCompatActivity() {
 
@@ -50,7 +44,8 @@ class ListDictionaryActivity : AppCompatActivity() {
                             is Result.Loading -> {}
                             is Result.Success -> {
                                 val letters = result.data
-                                dictionaryAdapter.submitList(letters)
+                                val sortedLetters = letters.sortedBy { it.nama }
+                                dictionaryAdapter.submitList(sortedLetters)
                                 binding.rvListDictionary.adapter = dictionaryAdapter
                             }
 
@@ -75,7 +70,8 @@ class ListDictionaryActivity : AppCompatActivity() {
                             is Result.Success -> {
                                 val words = result.data
                                 Log.d("resultWords", words.toString())
-                                dictionaryAdapter.submitList(words)
+                                val sortedWords = words.sortedBy { it.nama }
+                                dictionaryAdapter.submitList(sortedWords)
                                 binding.rvListDictionary.adapter = dictionaryAdapter
                             }
 

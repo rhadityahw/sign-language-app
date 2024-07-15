@@ -8,6 +8,7 @@ import com.pk.signlanguageapp.data.repository.DictionaryRepository
 import com.pk.signlanguageapp.data.repository.HateSpeechRepository
 import com.pk.signlanguageapp.ui.camerax.CameraViewModel
 import com.pk.signlanguageapp.ui.dictionary.DictionaryViewModel
+import com.pk.signlanguageapp.ui.speech.SpeechViewModel
 
 class ViewModelFactory(
     private var dictionaryRepository: DictionaryRepository,
@@ -21,6 +22,9 @@ class ViewModelFactory(
         }
         if (modelClass.isAssignableFrom(CameraViewModel::class.java)) {
             return CameraViewModel(hateSpeechRepository) as T
+        }
+        if (modelClass.isAssignableFrom(SpeechViewModel::class.java)) {
+            return SpeechViewModel(hateSpeechRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

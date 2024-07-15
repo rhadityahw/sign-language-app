@@ -77,6 +77,8 @@ dependencies {
     implementation("com.google.mediapipe:tasks-vision:latest.release")
     implementation("com.google.mediapipe:tasks-text:latest.release")
 
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.3")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

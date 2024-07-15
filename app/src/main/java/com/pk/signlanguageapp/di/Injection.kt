@@ -15,6 +15,7 @@ object Injection {
 
     fun provideHateSpeechRepository(context: Context): HateSpeechRepository {
         val apiService = ApiConfig.getApiService()
-        return HateSpeechRepository.getInstance(apiService)
+        val appExecutors = AppExecutors()
+        return HateSpeechRepository.getInstance(apiService, appExecutors)
     }
 }

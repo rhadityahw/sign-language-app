@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.pk.signlanguageapp.ui.speech.SpeechActivity
 import com.pk.signlanguageapp.databinding.FragmentHomeBinding
 import com.pk.signlanguageapp.ui.camerax.CameraActivity
+import com.pk.signlanguageapp.ui.camerax.WordLevelCameraActivity
 
 class HomeFragment : Fragment() {
 
@@ -46,12 +47,20 @@ class HomeFragment : Fragment() {
         }
 
         startSpeechRecognition()
+        startWordLevelCamera()
         startCameraX()
     }
 
     private fun startCameraX() {
         binding?.cvVideoToText?.setOnClickListener {
             val intent = Intent(activity, CameraActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun startWordLevelCamera() {
+        binding?.cvVideoToTextWord?.setOnClickListener {
+            val intent = Intent(activity, WordLevelCameraActivity::class.java)
             startActivity(intent)
         }
     }
