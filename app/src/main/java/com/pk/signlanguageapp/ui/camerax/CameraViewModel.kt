@@ -54,13 +54,6 @@ class CameraViewModel(private val hateSpeechRepository: HateSpeechRepository) : 
         get() =
             _minHandPresenceConfidence
 
-//    private val _gestureString = MutableLiveData<String>()
-//    val gestureString: LiveData<String> get() = _gestureString
-//
-//    fun setGestureString(string: String){
-//        _gestureString.value = string
-//    }
-
     fun setDelegate(delegate: Int) {
         _delegate = delegate
     }
@@ -75,18 +68,7 @@ class CameraViewModel(private val hateSpeechRepository: HateSpeechRepository) : 
         _minHandPresenceConfidence = confidence
     }
 
-//    private val _isHate = MutableLiveData<Result<HateSpeechResponse>>()
-//    val isHate: LiveData<Result<HateSpeechResponse>> get() = _isHate
-
-    @OptIn(UnstableApi::class)
     fun getHateSpeech(text: String): LiveData<Result<HateSpeechResponse>> {
-//        viewModelScope.launch {
-//            hateSpeechRepository.getHateSpeech(text).collect { result ->
-//                _isHate.value = result
-//                Log.d("isHateVM", _isHate.value.toString())
-//            }
-//        }
-//        return _isHate
         return hateSpeechRepository.getHateSpeech(text).asLiveData()
     }
 }

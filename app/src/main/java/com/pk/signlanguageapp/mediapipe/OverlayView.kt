@@ -25,7 +25,6 @@ import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.gesturerecognizer.GestureRecognizerResult
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
-import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
 import com.pk.signlanguageapp.R
 import kotlin.math.max
 import kotlin.math.min
@@ -42,14 +41,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     private var imageHeight: Int = 1
 
     init {
-        initPaints()
-    }
-
-    fun clear() {
-        results = null
-        linePaint.reset()
-        pointPaint.reset()
-        invalidate()
         initPaints()
     }
 

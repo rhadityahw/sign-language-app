@@ -10,6 +10,7 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -20,7 +21,6 @@ import com.google.mediapipe.tasks.components.containers.Category
 import com.google.mediapipe.tasks.text.textclassifier.TextClassifierResult
 import com.pk.signlanguageapp.ViewModelFactory
 import com.pk.signlanguageapp.databinding.ActivitySpeechBinding
-import com.pk.signlanguageapp.mediapipe.TextClassifierHelper
 import com.pk.signlanguageapp.ui.camerax.CameraViewModel
 import java.util.Locale
 import java.util.concurrent.ExecutorService
@@ -41,10 +41,6 @@ class SpeechActivity : AppCompatActivity() {
     private var speechResult = ""
     private var hateResult = false
 
-//    private var resultTextClassifier: Category? = null
-//
-//    private lateinit var classifierHelper: TextClassifierHelper
-
     private val allowPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             it.let {
@@ -54,32 +50,6 @@ class SpeechActivity : AppCompatActivity() {
                 }
             }
         }
-
-//    private val listener = object :
-//        TextClassifierHelper.TextResultsListener {
-//        override fun onResult(
-//            results: TextClassifierResult,
-//            inferenceTime: Long
-//        ) {
-//            runOnUiThread {
-//                Log.d("HASIL NLP" , results.classificationResult()
-//                    .classifications().first()
-//                    .categories().maxByOrNull {
-//                        it.score()
-//                    }.toString()
-//                )
-//                resultTextClassifier = results.classificationResult()
-//                    .classifications().first()
-//                    .categories().maxByOrNull {
-//                        it.score()
-//                    }
-//            }
-//        }
-//
-//        override fun onError(error: String) {
-//            Toast.makeText(this@SpeechActivity, error, Toast.LENGTH_SHORT).show()
-//        }
-//    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,14 +74,6 @@ class SpeechActivity : AppCompatActivity() {
                 }
             }
         }
-
-//        runOnUiThread {
-//            classifierHelper = TextClassifierHelper(
-//                context = this@SpeechActivity,
-//                listener = listener
-//            )
-//        }
-
     }
 
     private fun startListen() {
@@ -143,16 +105,13 @@ class SpeechActivity : AppCompatActivity() {
                 bundle?.let {
                     val result = it.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                     speechResult = result?.get(0).toString()
-//                    viewModel.getHateSpeech(speechResult)
                     viewModel.getHateSpeech(speechResult).observe(this@SpeechActivity) { category ->
                         if (category != null) {
-//                            Log.d("category", category.toString())
                             when (category) {
                                 is Result.Loading -> {
 
                                 }
                                 is Result.Success -> {
-//                                    Log.d("category2", category.data.toString())
                                     hateResult = category.data.result
                                     Log.d("speechHateSpeech", hateResult.toString())
                                     if (hateResult) {

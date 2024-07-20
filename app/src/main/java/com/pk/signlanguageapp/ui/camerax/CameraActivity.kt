@@ -17,31 +17,20 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import com.google.mediapipe.tasks.core.BaseOptions
-import com.google.mediapipe.tasks.text.textclassifier.TextClassifier
-import com.google.mediapipe.tasks.text.textclassifier.TextClassifierResult
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.pk.signlanguageapp.ViewModelFactory
 import com.pk.signlanguageapp.data.result.Result
 import com.pk.signlanguageapp.databinding.ActivityCameraBinding
 import com.pk.signlanguageapp.mediapipe.GestureRecognizerHelper
-import com.pk.signlanguageapp.mediapipe.TextClassifierHelper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.ScheduledThreadPoolExecutor
 
 class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecognizerListener {
 
     private lateinit var binding: ActivityCameraBinding
 
     private lateinit var gestureRecognizerHelper: GestureRecognizerHelper
-//    private lateinit var classifierHelperHelper: TextClassifierHelper
 
     private val cameraViewModel: CameraViewModel by viewModels {
         ViewModelFactory.getInstance(this)
@@ -60,41 +49,6 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
     private var lastDetectedGesture = ""
     private var lastDetectedTime = 0L
     private var detectedString = ""
-    private var modalIsOpen = false
-
-    var debounceJob: Job? = null
-
-    // NLP
-//    private val currentModel = "model.tflite"
-//    private val baseOptionsBuilder = BaseOptions.builder()
-//        .setModelAssetPath(currentModel)
-//    private val baseOptions = baseOptionsBuilder.build()
-//    private val optionsBuilder = TextClassifier.TextClassifierOptions.builder()
-//        .setBaseOptions(baseOptions)
-//    private val options = optionsBuilder.build()
-
-//    private lateinit var textClassifier: TextClassifier
-
-//    private val listener = object :
-//        TextClassifierHelper.TextResultsListener {
-//        override fun onResult(
-//            results: TextClassifierResult,
-//            inferenceTime: Long
-//        ) {
-//            backgroundExecutor.execute {
-//                Log.d("HASIL NLP" , results.classificationResult()
-//                    .classifications().first()
-//                    .categories().sortedByDescending {
-//                        it.score()
-//                    }.toString()
-//                )
-//            }
-//        }
-//
-//        override fun onError(error: String) {
-//            Toast.makeText(this@CameraActivity, error, Toast.LENGTH_SHORT).show()
-//        }
-//    }
 
     override fun onResume() {
         super.onResume()
@@ -120,64 +74,16 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
     override fun onDestroy() {
         super.onDestroy()
 
-        backgroundExecutor.shutdown()
         backgroundExecutor.awaitTermination(
             Long.MAX_VALUE, TimeUnit.NANOSECONDS
         )
+        backgroundExecutor.shutdown()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        val gestureStringLiveData = cameraViewModel.gestureString
-//        gestureStringLiveData.observe(this) { data ->
-//            detectedString = data
-//
-//            cameraViewModel.getHateSpeech(detectedString)
-//            cameraViewModel.isHate.observe(this) { result ->
-//                if (result != null) {
-//                    when (result) {
-//                        is Result.Loading -> {}
-//                        is Result.Success -> {
-//                            val hateResult = result.data
-//                            Log.d("hateResult", hateResult.toString())
-//
-//                            if (hateResult.result) {
-//                                if (!modalIsOpen){
-//                                    AlertDialog.Builder(this).apply {
-//                                        setTitle("Peringatan!")
-//                                        setMessage("Anda terdeteksi melakukan hate speech")
-//                                        setNegativeButton("OK") { dialog, _ ->
-//                                            dialog.dismiss()
-//                                        }
-//                                        create()
-//                                        show()
-//                                    }
-//                                    modalIsOpen = true
-//                                }
-//                                else{
-//                                    modalIsOpen = false
-//                                }
-//                            }
-//
-//                            Log.d("modalIsOpen", modalIsOpen.toString())
-//                        }
-//
-//                        is Result.Error -> {
-////                            Toast.makeText(
-////                                this@CameraActivity,
-////                                "Terjadi kesalahan: ${result.error}",
-////                                Toast.LENGTH_SHORT
-////                            ).show()
-//                            Log.e("hateResult", result.error)
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
-//        textClassifier = TextClassifier.createFromOptions(this, options)
 
         if (!allPermissionsGranted()) {
             requestPermissionLauncher.launch(REQUIRED_PERMISSION)
@@ -191,11 +97,6 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
             setupCamera()
         }
 
-//        classifierHelperHelper = TextClassifierHelper(
-//            context = this,
-//            currentModel = "model.tflite",
-//            listener = listener
-//        )
         backgroundExecutor.execute {
             gestureRecognizerHelper = GestureRecognizerHelper(
                 context = this,
@@ -207,8 +108,6 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
                 gestureRecognizerListener = this
             )
         }
-
-
     }
 
     private fun setupCamera() {
@@ -231,8 +130,6 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
 
         val cameraSelector =
             CameraSelector.Builder().requireLensFacing(cameraFacing).build()
-
-
 
         preview = Preview.Builder()
             .build()
@@ -280,7 +177,6 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
                 val startIndex = gestureText.indexOf("\"") + 1
                 val endIndex = gestureText.indexOf("\"", startIndex)
                 val displayName = gestureText.substring(startIndex, endIndex)
-                Log.d("HASIL", displayName)
 
                 binding.tvGesture.text = "Gesture: $displayName"
 
@@ -293,16 +189,12 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
                             "del" -> if (detectedString.isNotEmpty()) detectedString = detectedString.dropLast(1)
                             else -> {
                                 detectedString += displayName
-//                                detectedString = "dasar babi"
-//                                Log.d("vmIsHate", cameraViewModel.isHate.toString())
                                 cameraViewModel.getHateSpeech(detectedString).observe(this) { result ->
                                     if (result != null) {
-                                        Log.d("isHateResult", result.toString())
                                         when (result) {
                                             is Result.Loading -> {}
                                             is Result.Success -> {
                                                 val hateResult = result.data.result
-                                                Log.d("hateResult", hateResult.toString())
                                                 if (hateResult) {
                                                     AlertDialog.Builder(this).apply {
                                                         setTitle("Peringatan!")

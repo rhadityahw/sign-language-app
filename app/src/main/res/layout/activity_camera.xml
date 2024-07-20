@@ -69,7 +69,7 @@
                 android:layout_marginStart="25dp"
                 android:layout_marginBottom="25dp"
                 android:layout_marginEnd="15dp"
-                android:text="saya suka makan nasi"
+                android:text="Scan the sign to start"
                 android:textSize="16sp"
                 android:textColor="@color/black"
                 android:fontFamily="@font/poppins_semibold"
