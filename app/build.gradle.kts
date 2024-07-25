@@ -6,6 +6,11 @@ plugins {
 }
 
 android {
+
+     androidResources{
+         noCompress += "tflite"
+     }
+
     namespace = "com.pk.signlanguageapp"
     compileSdk = 34
 
@@ -77,12 +82,16 @@ dependencies {
 
     implementation("org.tensorflow:tensorflow-lite-gpu:2.13.0")
     implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.4")
+    implementation ("org.tensorflow:tensorflow-lite:2.10.0")
+    implementation ("org.tensorflow:tensorflow-lite-support:0.3.1")
+    implementation ("org.tensorflow:tensorflow-lite-select-tf-ops:2.10.0")
 
     implementation("com.google.mediapipe:tasks-vision:latest.release")
     implementation("com.google.mediapipe:tasks-text:latest.release")
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.3")
 
+    implementation("com.google.code.gson:gson:2.8.9")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -1,5 +1,6 @@
 package com.pk.signlanguageapp.ui.camerax
 
+import MotionClassifier
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
@@ -20,6 +21,8 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.pk.signlanguageapp.ViewModelFactory
 import com.pk.signlanguageapp.databinding.ActivityWordLevelCameraBinding
 import com.pk.signlanguageapp.mediapipe.HandLandmarkHelper
+import com.pk.signlanguageapp.utils.sliceLast
+import okhttp3.internal.toImmutableList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -43,6 +46,8 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
     private var cameraFacing = CameraSelector.LENS_FACING_FRONT
 
     private lateinit var backgroundExecutor: ExecutorService
+    private var sequences: MutableList<List<Float>> = mutableListOf()
+    private lateinit var motionClassifier: MotionClassifier
 
     override fun onResume() {
         super.onResume()
@@ -74,6 +79,7 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        motionClassifier  = MotionClassifier(this, "gestura.tflite")
         binding = ActivityWordLevelCameraBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -89,6 +95,7 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
             handLandmarkerHelper = HandLandmarkHelper(
                 context = this,
                 runningMode = RunningMode.LIVE_STREAM,
+                maxNumHands = 2,
                 minHandDetectionConfidence = wordLevelCameraViewModel. currentMinHandDetectionConfidence,
                 minHandTrackingConfidence = wordLevelCameraViewModel.currentMinHandTrackingConfidence,
                 minHandPresenceConfidence = wordLevelCameraViewModel.currentMinHandPresenceConfidence,
@@ -223,14 +230,24 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
     }
 
     override fun onResults(resultBundle: HandLandmarkHelper.ResultBundle) {
+
+
         runOnUiThread {
+            val keypoint = wordLevelCameraViewModel.getPrepKeypoints(resultBundle)
+            sequences.add(keypoint)
+            sequences = sequences.sliceLast(30).toMutableList()
+            if(sequences.count() == 30){
+                val classify = motionClassifier.classify(sequences)
+
+                //Classify mereturn string berupa predictionnya
+                Log.d("hasil: ", classify)
+            }
             binding.overlay.setResults(
                 resultBundle.results.first(),
                 resultBundle.inputImageHeight,
                 resultBundle.inputImageWidth,
                 RunningMode.LIVE_STREAM
             )
-
             binding.overlay.invalidate()
         }
     }
