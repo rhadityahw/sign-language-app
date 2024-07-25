@@ -15,7 +15,7 @@ class MotionClassifier(context: Context, modelPath: String) {
     private var interpreter: Interpreter
     val classes: List<String>
     val NumberOfClasses : Int
-
+    val threshold = 0.7f
     init {
         val options = Interpreter.Options().apply {
             // Menambahkan Flex Delegate
@@ -50,6 +50,9 @@ class MotionClassifier(context: Context, modelPath: String) {
             outputBuffer.asFloatBuffer().get(outputArray)
             val maxIndex = outputArray.indices.maxByOrNull { outputArray[it] } ?: -1
 
+            if (outputArray[maxIndex] < threshold){
+                return "none"
+            }
             return classes[maxIndex]
         }catch (e: Exception){
             return e.message.toString()

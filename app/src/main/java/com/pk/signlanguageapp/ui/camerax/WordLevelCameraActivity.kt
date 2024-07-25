@@ -230,8 +230,6 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
     }
 
     override fun onResults(resultBundle: HandLandmarkHelper.ResultBundle) {
-
-
         runOnUiThread {
             val keypoint = wordLevelCameraViewModel.getPrepKeypoints(resultBundle)
             sequences.add(keypoint)
