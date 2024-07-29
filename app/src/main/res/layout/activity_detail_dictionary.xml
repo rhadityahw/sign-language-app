@@ -7,17 +7,38 @@
     android:layout_height="match_parent"
     tools:context=".ui.dictionary.DetailDictionaryActivity">
 
-    <androidx.media3.ui.PlayerView
-        android:id="@+id/videoDetailDictionary"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/visualDetailDictionary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="25dp"
         android:layout_marginTop="30dp"
         android:visibility="gone"
-        app:layout_constraintCircleRadius="25dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/imageDetailDictionary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="30dp"
+            app:layout_constraintCircleRadius="25dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/videoDetailDictionary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintCircleRadius="25dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/tvDetailDictionary"
@@ -28,8 +49,8 @@
         tools:text="Words"
         android:textSize="22sp"
         android:fontFamily="@font/poppins_semibold"
-        app:layout_constraintStart_toStartOf="@id/videoDetailDictionary"
-        app:layout_constraintTop_toBottomOf="@id/videoDetailDictionary"/>
+        app:layout_constraintStart_toStartOf="@id/visualDetailDictionary"
+        app:layout_constraintTop_toBottomOf="@id/visualDetailDictionary" />
 
     <ProgressBar
         android:id="@+id/progressBar"

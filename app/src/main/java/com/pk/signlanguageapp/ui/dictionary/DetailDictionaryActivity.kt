@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.bumptech.glide.Glide
 import com.pk.signlanguageapp.ViewModelFactory
 import com.pk.signlanguageapp.data.response.DictionaryResponseItem
 import com.pk.signlanguageapp.data.result.Result
@@ -45,21 +46,23 @@ class DetailDictionaryActivity : AppCompatActivity() {
                             is Result.Success -> {
                                 lifecycleScope.launch {
                                     val letter = result.data
+
                                     val text = letter.joinToString("\n") { item ->
                                         item.nama
                                     }
+
+                                    Log.d("GGG", text)
                                     val video = letter.joinToString("\n") { item ->
                                         item.video
                                     }
+                                    Log.d("GGG", video)
                                     binding.tvDetailDictionary.text = text
-                                    val videoUri = MediaItem.fromUri(video)
-
-                                    val player = ExoPlayer.Builder(this@DetailDictionaryActivity).build().also { exoPlayer ->
-                                        exoPlayer.setMediaItem(videoUri)
-                                        exoPlayer.prepare()
-                                        exoPlayer.playWhenReady = true
-                                    }
-                                    binding.videoDetailDictionary.player = player
+                                    Glide.with(this@DetailDictionaryActivity)
+                                        .load(video)
+                                        .into(binding.imageDetailDictionary)
+                                    binding.videoDetailDictionary.visibility = View.GONE
+                                    binding.visualDetailDictionary.visibility = View.VISIBLE
+                                    binding.tvDetailDictionary.visibility = View.VISIBLE
                                 }
                             }
                             is Result.Error -> {
@@ -97,7 +100,7 @@ class DetailDictionaryActivity : AppCompatActivity() {
                                         exoPlayer.addListener(object : Player.Listener {
                                             override fun onPlaybackStateChanged(state: Int) {
                                                 if (state == Player.STATE_READY) {
-                                                    binding.videoDetailDictionary.visibility = View.VISIBLE
+                                                    binding.visualDetailDictionary.visibility = View.VISIBLE
                                                     binding.tvDetailDictionary.visibility = View.VISIBLE
                                                     binding.progressBar.visibility = View.GONE
                                                 }

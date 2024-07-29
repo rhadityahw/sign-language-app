@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.pk.signlanguageapp.MainActivity
+import com.pk.signlanguageapp.R
 import com.pk.signlanguageapp.databinding.ActivityProfileBinding
 import com.squareup.picasso.Picasso
 
@@ -44,9 +45,13 @@ class ProfileActivity : AppCompatActivity() {
         user = firebaseAuth.currentUser!!
 
         val profileRef = storageReference.child( "users/"+ firebaseAuth.currentUser!!.uid +"profile.jpg")
-        profileRef.downloadUrl.addOnSuccessListener { uri ->
-            Picasso.get().load(uri).into(binding.ivAvatar)
-        }
+        profileRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                Picasso.get().load(uri).into(binding.ivAvatar)
+            }
+            .addOnFailureListener {
+                binding.ivAvatar.setImageResource(R.drawable.default_profile)
+            }
 
         firebaseFirestore.collection("users").document(userId)
             .addSnapshotListener(this@ProfileActivity, EventListener { documentSnapshot, _ ->

@@ -15,7 +15,7 @@ class MotionClassifier(context: Context, modelPath: String) {
     private var interpreter: Interpreter
     val classes: List<String>
     val NumberOfClasses : Int
-    val threshold = 0.7f
+    val threshold = 0.5f
     init {
         val options = Interpreter.Options().apply {
             // Menambahkan Flex Delegate

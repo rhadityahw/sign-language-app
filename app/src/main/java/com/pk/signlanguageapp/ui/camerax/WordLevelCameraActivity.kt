@@ -3,12 +3,14 @@ package com.pk.signlanguageapp.ui.camerax
 import MotionClassifier
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -18,11 +20,12 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.pk.signlanguageapp.MainActivity
 import com.pk.signlanguageapp.ViewModelFactory
+import com.pk.signlanguageapp.data.result.Result
 import com.pk.signlanguageapp.databinding.ActivityWordLevelCameraBinding
 import com.pk.signlanguageapp.mediapipe.HandLandmarkHelper
 import com.pk.signlanguageapp.utils.sliceLast
-import okhttp3.internal.toImmutableList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -37,7 +40,7 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
         ViewModelFactory.getInstance(this)
     }
 
-    private var cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private var cameraSelector: CameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
@@ -48,6 +51,10 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
     private lateinit var backgroundExecutor: ExecutorService
     private var sequences: MutableList<List<Float>> = mutableListOf()
     private lateinit var motionClassifier: MotionClassifier
+
+    private var lastDetectedMotion = ""
+    private var lastDetectedTime = 0L
+    private var detectedString = ""
 
     override fun onResume() {
         super.onResume()
@@ -85,11 +92,21 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
 
         if (!allPermissionsGranted()) {
             requestPermissionLauncher.launch(REQUIRED_PERMISSION)
+        } else {
+            setupCamera()
         }
 
         backgroundExecutor = Executors.newSingleThreadExecutor()
 
         switchCamera()
+
+        binding.btnDone.setOnClickListener {
+            moveToMain()
+        }
+
+        binding.backCamera.setOnClickListener {
+            moveToMain()
+        }
 
         backgroundExecutor.execute {
             handLandmarkerHelper = HandLandmarkHelper(
@@ -105,35 +122,16 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
         }
     }
 
-//    private fun startCamera() {
-//
-//        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-//
-//        cameraProviderFuture.addListener({
-//            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-//            val preview = Preview.Builder()
-//                .build()
-//                .also {
-//                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-//                }
-//
-//            try {
-//                cameraProvider.unbindAll()
-//                cameraProvider.bindToLifecycle(
-//                    this,
-//                    cameraSelector,
-//                    preview
-//                )
-//            } catch (exc: Exception) {
-//                Toast.makeText(
-//                    this,
-//                    "Gagal memunculkan kamera.",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//                Log.e(TAG, "startCamera: ${exc.message}")
-//            }
-//        }, ContextCompat.getMainExecutor(this))
-//    }
+    private fun moveToMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
 
     private fun setupCamera() {
         val cameraProviderFuture =
@@ -158,6 +156,12 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
 
         preview = Preview.Builder()
             .build()
+
+//        val camera2Interop = Camera2Interop.Extender(previewBuilder)
+//        camera2Interop.setCaptureRequestOption(
+//            android.hardware.camera2.CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
+//            Range(30, 30)
+//        )
 
         imageAnalyzer =
             ImageAnalysis.Builder()
@@ -191,8 +195,8 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
 
     private fun switchCamera() {
         binding.switchCamera.setOnClickListener {
-            cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
-            else CameraSelector.DEFAULT_BACK_CAMERA
+            cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) CameraSelector.DEFAULT_BACK_CAMERA
+            else CameraSelector.DEFAULT_FRONT_CAMERA
 
             cameraFacing = if (cameraFacing == CameraSelector.LENS_FACING_FRONT) CameraSelector.LENS_FACING_BACK
             else CameraSelector.LENS_FACING_FRONT
@@ -229,7 +233,9 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
         }
     }
 
-    override fun onResults(resultBundle: HandLandmarkHelper.ResultBundle) {
+    override fun onResults(
+        resultBundle: HandLandmarkHelper.ResultBundle
+    ) {
         runOnUiThread {
             val keypoint = wordLevelCameraViewModel.getPrepKeypoints(resultBundle)
             sequences.add(keypoint)
@@ -237,8 +243,51 @@ class WordLevelCameraActivity : AppCompatActivity(), HandLandmarkHelper.Landmark
             if(sequences.count() == 30){
                 val classify = motionClassifier.classify(sequences)
 
+                binding.tvGesture.text = "Gesture: $classify"
+
                 //Classify mereturn string berupa predictionnya
-                Log.d("hasil: ", classify)
+                val currentTime = System.currentTimeMillis() / 1000
+                if (classify == lastDetectedMotion) {
+                    if (currentTime - lastDetectedTime >= 2) {
+                        if (classify != "none") {
+                            detectedString = classify
+                            wordLevelCameraViewModel.getHateSpeech(detectedString)
+                                .observe(this) { result ->
+                                    if (result != null) {
+                                        when (result) {
+                                            is Result.Loading -> {}
+                                            is Result.Success -> {
+                                                val hateResult = result.data.result
+                                                if (hateResult) {
+                                                    AlertDialog.Builder(this).apply {
+                                                        setTitle("Peringatan!")
+                                                        setMessage("Anda terdeteksi melakukan hate speech")
+                                                        setNegativeButton("OK") { dialog, _ ->
+                                                            dialog.dismiss()
+                                                        }
+                                                        create()
+                                                        show()
+                                                    }
+                                                    detectedString = ""
+                                                }
+                                            }
+
+                                            is Result.Error -> {
+                                                Log.e("hateResultError", result.error)
+                                            }
+                                        }
+                                    }
+                                }
+                            lastDetectedMotion = ""
+                        }
+                    }
+                } else {
+                    lastDetectedMotion = classify
+                    lastDetectedTime = currentTime
+                }
+
+                binding.tvTranslate.text = detectedString
+
             }
             binding.overlay.setResults(
                 resultBundle.results.first(),

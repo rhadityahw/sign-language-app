@@ -33,7 +33,9 @@ import kotlinx.coroutines.launch
 /**
  *  This ViewModel is used to store hand landmarker helper settings
  */
-class CameraViewModel(private val hateSpeechRepository: HateSpeechRepository) : ViewModel() {
+class CameraViewModel(
+    private val hateSpeechRepository: HateSpeechRepository
+) : ViewModel() {
 
     private var _delegate: Int = GestureRecognizerHelper.DELEGATE_CPU
     private var _minHandDetectionConfidence: Float =

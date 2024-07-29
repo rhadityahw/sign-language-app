@@ -1,5 +1,6 @@
 package com.pk.signlanguageapp.ui.dictionary
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -28,6 +29,10 @@ class DictionaryAdapter: ListAdapter<DictionaryResponseItem, DictionaryAdapter.V
                 }
             }
         }
+    }
+
+    fun setFilteredList(mList: List<DictionaryResponseItem>){
+        submitList(mList)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

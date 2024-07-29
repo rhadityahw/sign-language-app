@@ -25,7 +25,7 @@ class ViewModelFactory(
             return CameraViewModel(hateSpeechRepository) as T
         }
         if (modelClass.isAssignableFrom(WordLevelCameraViewModel::class.java)) {
-            return WordLevelCameraViewModel() as T
+            return WordLevelCameraViewModel(hateSpeechRepository) as T
         }
         if (modelClass.isAssignableFrom(SpeechViewModel::class.java)) {
             return SpeechViewModel(hateSpeechRepository) as T

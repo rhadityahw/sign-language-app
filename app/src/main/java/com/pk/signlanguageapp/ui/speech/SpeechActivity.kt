@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.components.containers.Category
 import com.google.mediapipe.tasks.text.textclassifier.TextClassifierResult
+import com.pk.signlanguageapp.MainActivity
 import com.pk.signlanguageapp.ViewModelFactory
 import com.pk.signlanguageapp.databinding.ActivitySpeechBinding
 import com.pk.signlanguageapp.ui.camerax.CameraViewModel
@@ -73,6 +74,14 @@ class SpeechActivity : AppCompatActivity() {
                     return@setOnTouchListener true
                 }
             }
+        }
+
+        binding.btnDone.setOnClickListener {
+            moveToMain()
+        }
+
+        binding.backSpeech.setOnClickListener {
+            moveToMain()
         }
     }
 
@@ -156,5 +165,10 @@ class SpeechActivity : AppCompatActivity() {
         } else {
             allowPermission.launch(android.Manifest.permission.RECORD_AUDIO)
         }
+    }
+
+    private fun moveToMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 }

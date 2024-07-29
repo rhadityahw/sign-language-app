@@ -36,7 +36,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     private var linePaint = Paint()
     private var pointPaint = Paint()
 
-    private var scaleFactor: Float = -1f
+    private var scaleFactor: Float = 1f
     private var imageWidth: Int = 1
     private var imageHeight: Int = 1
 
@@ -69,16 +69,11 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
 
                 HandLandmarker.HAND_CONNECTIONS.forEach {
                     canvas.drawLine(
-                        landmark.get(it!!.start())
-                            .x() * imageWidth * scaleFactor,
-                        landmark.get(it.start())
-                            .y() * imageHeight * scaleFactor,
-                        landmark.get(it.end())
-                            .x() * imageWidth * scaleFactor,
-                        landmark.get(it.end())
-                            .y() * imageHeight * scaleFactor,
-                        linePaint
-                    )
+                        gestureRecognizerResult.landmarks().get(0).get(it!!.start()).x() * imageWidth * scaleFactor,
+                        gestureRecognizerResult.landmarks().get(0).get(it.start()).y() * imageHeight * scaleFactor,
+                        gestureRecognizerResult.landmarks().get(0).get(it.end()).x() * imageWidth * scaleFactor,
+                        gestureRecognizerResult.landmarks().get(0).get(it.end()).y() * imageHeight * scaleFactor,
+                        linePaint)
                 }
             }
         }

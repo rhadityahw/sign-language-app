@@ -46,9 +46,13 @@ class AccountFragment : Fragment() {
         userId = firebaseAuth.currentUser!!.uid
 
         val profileRef = storageReference.child( "users/"+ firebaseAuth.currentUser!!.uid +"profile.jpg")
-        profileRef.downloadUrl.addOnSuccessListener { uri ->
-            Picasso.get().load(uri).into(binding?.ivAccountAvatar)
-        }
+        profileRef.downloadUrl
+            .addOnSuccessListener { uri ->
+                Picasso.get().load(uri).into(binding?.ivAccountAvatar)
+            }
+            .addOnFailureListener {
+                binding?.ivAccountAvatar?.setImageResource(R.drawable.default_profile)
+            }
 
         firebaseFirestore.collection("users").document(userId).addSnapshotListener { documentSnapshot, _ ->
             binding?.apply {
@@ -57,7 +61,7 @@ class AccountFragment : Fragment() {
             }
         }
 
-//        logout()
+        logout()
         profileClick()
     }
 
@@ -69,21 +73,21 @@ class AccountFragment : Fragment() {
         }
     }
 
-//    private fun logout() {
-//        binding?.cvLogout?.setOnClickListener {
-//            AlertDialog.Builder(requireActivity()).apply {
-//                setTitle("Peringatan!")
-//                setMessage("Apakah anda yakin ingin keluar?")
-//                setPositiveButton("Ya") { _, _ ->
-//                    firebaseAuth.signOut()
-//                    activity?.finish()
-//                }
-//                setNegativeButton("Tidak") { dialog, _ ->
-//                    dialog.dismiss()
-//                }
-//                create()
-//                show()
-//            }
-//        }
-//    }
+    private fun logout() {
+        binding?.cvLogout?.setOnClickListener {
+            AlertDialog.Builder(requireActivity()).apply {
+                setTitle("Peringatan!")
+                setMessage("Apakah anda yakin ingin keluar?")
+                setPositiveButton("Ya") { _, _ ->
+                    firebaseAuth.signOut()
+                    activity?.finish()
+                }
+                setNegativeButton("Tidak") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                create()
+                show()
+            }
+        }
+    }
 }

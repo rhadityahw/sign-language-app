@@ -1,10 +1,17 @@
 package com.pk.signlanguageapp.ui.camerax
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import com.pk.signlanguageapp.data.repository.HateSpeechRepository
+import com.pk.signlanguageapp.data.response.HateSpeechResponse
+import com.pk.signlanguageapp.data.result.Result
 import com.pk.signlanguageapp.mediapipe.GestureRecognizerHelper
 import com.pk.signlanguageapp.mediapipe.HandLandmarkHelper
 
-class WordLevelCameraViewModel() : ViewModel() {
+class WordLevelCameraViewModel(
+    private val hateSpeechRepository: HateSpeechRepository
+) : ViewModel() {
 
     private var _delegate: Int = GestureRecognizerHelper.DELEGATE_CPU
     private var _minHandDetectionConfidence: Float =
@@ -50,5 +57,9 @@ class WordLevelCameraViewModel() : ViewModel() {
             }
         }
         return firstHand + secondHand;
+    }
+
+    fun getHateSpeech(text: String): LiveData<Result<HateSpeechResponse>> {
+        return hateSpeechRepository.getHateSpeech(text).asLiveData()
     }
 }

@@ -2,6 +2,7 @@ package com.pk.signlanguageapp.ui.camerax
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +19,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.pk.signlanguageapp.MainActivity
 import com.pk.signlanguageapp.ViewModelFactory
 import com.pk.signlanguageapp.data.result.Result
 import com.pk.signlanguageapp.databinding.ActivityCameraBinding
@@ -36,7 +38,7 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
         ViewModelFactory.getInstance(this)
     }
 
-    private var cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private var cameraSelector: CameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
@@ -87,6 +89,8 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
 
         if (!allPermissionsGranted()) {
             requestPermissionLauncher.launch(REQUIRED_PERMISSION)
+        } else {
+            setupCamera()
         }
 
         backgroundExecutor = Executors.newSingleThreadExecutor()
@@ -95,6 +99,14 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
 
         binding.viewFinder.post {
             setupCamera()
+        }
+
+        binding.btnDone.setOnClickListener {
+            moveToMain()
+        }
+
+        binding.backCamera.setOnClickListener {
+            moveToMain()
         }
 
         backgroundExecutor.execute {
@@ -108,6 +120,11 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
                 gestureRecognizerListener = this
             )
         }
+    }
+
+    private fun moveToMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     private fun setupCamera() {
@@ -162,6 +179,12 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
         gestureRecognizerHelper.recognizeLiveStream(
             imageProxy = imageProxy,
         )
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     @SuppressLint("SetTextI18n")
