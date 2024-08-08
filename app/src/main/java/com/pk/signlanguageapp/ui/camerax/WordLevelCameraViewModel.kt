@@ -46,17 +46,29 @@ class WordLevelCameraViewModel(
         _minHandPresenceConfidence = confidence
     }
 
-    fun getPrepKeypoints(resultBundle: HandLandmarkHelper.ResultBundle): List<Float>{
-        var firstHand = List(63) { 0.0f }
-        var secondHand = List(63) { 0.0f }
-        resultBundle.results.first().landmarks().forEachIndexed { index, normalizedLandmarks ->
-            if (index > 0){
-                secondHand = normalizedLandmarks.map {  arrayOf(it.x(),it.y(),it.z()) }.toTypedArray().flatten()
-            }else{
-                firstHand = normalizedLandmarks.map {  arrayOf(it.x(),it.y(),it.z()) }.toTypedArray().flatten();
+    fun getPrepKeypoints(resultBundle: HandLandmarkHelper.ResultBundle): List<Float> {
+        val lh = MutableList(63) { 0.0f }
+        val rh = MutableList(63) { 0.0f }
+
+        resultBundle.results.firstOrNull()?.let { result ->
+            result.landmarks().forEachIndexed { index, normalizedLandmarks ->
+                val handLabel = result.handednesses()?.get(index)?.firstOrNull()?.categoryName()
+                val keypoints = normalizedLandmarks.map { listOf(it.x(), it.y(), it.z()) }.flatten()
+                when (handLabel) {
+                    "Right" -> {
+                        for (i in keypoints.indices) {
+                            lh[i] = keypoints[i]
+                        }
+                    }
+                    "Left" -> {
+                        for (i in keypoints.indices) {
+                            rh[i] = keypoints[i]
+                        }
+                    }
+                }
             }
         }
-        return firstHand + secondHand;
+        return lh + rh
     }
 
     fun getHateSpeech(text: String): LiveData<Result<HateSpeechResponse>> {
