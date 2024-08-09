@@ -271,8 +271,8 @@ class CameraActivity : AppCompatActivity(), GestureRecognizerHelper.GestureRecog
             cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
             else CameraSelector.DEFAULT_BACK_CAMERA
 
-            cameraFacing = if (cameraFacing == CameraSelector.LENS_FACING_FRONT) CameraSelector.LENS_FACING_BACK
-            else CameraSelector.LENS_FACING_FRONT
+            cameraFacing = if (cameraFacing == CameraSelector.LENS_FACING_BACK) CameraSelector.LENS_FACING_FRONT
+            else CameraSelector.LENS_FACING_BACK
 
             setupCamera()
         }

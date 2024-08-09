@@ -58,11 +58,12 @@ class WordLevelOverlayView(context: Context?, attrs: AttributeSet?) :
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+        val xOffset = imageWidth / 2
         results?.let { gestureRecognizerResult ->
             for (landmark in gestureRecognizerResult.landmarks()) {
                 for (normalizedLandmark in landmark) {
                     canvas.drawPoint(
-                        normalizedLandmark.x() * imageWidth * scaleFactor,
+                        normalizedLandmark.x() * imageWidth * scaleFactor - xOffset,
                         normalizedLandmark.y() * imageHeight * scaleFactor,
                         pointPaint
                     )
@@ -71,11 +72,11 @@ class WordLevelOverlayView(context: Context?, attrs: AttributeSet?) :
                 HandLandmarker.HAND_CONNECTIONS.forEach {
                     canvas.drawLine(
                         landmark.get(it!!.start())
-                            .x() * imageWidth * scaleFactor,
+                            .x() * imageWidth * scaleFactor - xOffset,
                         landmark.get(it.start())
                             .y() * imageHeight * scaleFactor,
                         landmark.get(it.end())
-                            .x() * imageWidth * scaleFactor,
+                            .x() * imageWidth * scaleFactor - xOffset,
                         landmark.get(it.end())
                             .y() * imageHeight * scaleFactor,
                         linePaint
@@ -89,7 +90,7 @@ class WordLevelOverlayView(context: Context?, attrs: AttributeSet?) :
         handLandmarkerResult: HandLandmarkerResult,
         imageHeight: Int,
         imageWidth: Int,
-        runningMode: RunningMode = RunningMode.IMAGE
+        runningMode: RunningMode = RunningMode.LIVE_STREAM
     ) {
         results = handLandmarkerResult
 
@@ -105,7 +106,7 @@ class WordLevelOverlayView(context: Context?, attrs: AttributeSet?) :
                 // PreviewView is in FILL_START mode. So we need to scale up the
                 // landmarks to match with the size that the captured images will be
                 // displayed.
-                max(width * -1f / imageWidth, height * -1f / imageHeight)
+                max(width * 1f / imageWidth, height * 1f / imageHeight)
             }
         }
         invalidate()

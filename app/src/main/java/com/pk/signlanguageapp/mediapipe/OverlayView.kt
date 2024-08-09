@@ -20,6 +20,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.core.RunningMode
@@ -33,10 +34,10 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
 
     private var results: GestureRecognizerResult? = null
-    private var linePaint = Paint()
-    private var pointPaint = Paint()
+    private val linePaint = Paint()
+    private val pointPaint = Paint()
 
-    private var scaleFactor: Float = 1f
+    private var scaleFactor: Float = 0.5f
     private var imageWidth: Int = 1
     private var imageHeight: Int = 1
 
@@ -58,32 +59,42 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         results?.let { gestureRecognizerResult ->
+            val xOffset = imageWidth / 2
             for (landmark in gestureRecognizerResult.landmarks()) {
                 for (normalizedLandmark in landmark) {
-                    canvas.drawPoint(
-                        normalizedLandmark.x() * imageWidth * scaleFactor,
-                        normalizedLandmark.y() * imageHeight * scaleFactor,
-                        pointPaint
-                    )
+                    val x = normalizedLandmark.x() * imageWidth * scaleFactor - xOffset
+                    val y = normalizedLandmark.y() * imageHeight * scaleFactor
+
+                    Log.d("OverlayView", "Transformed Landmark x: $x, y: $y")
+
+                    canvas.drawPoint(x, y, pointPaint)
+
                 }
 
-                HandLandmarker.HAND_CONNECTIONS.forEach {
-                    canvas.drawLine(
-                        gestureRecognizerResult.landmarks().get(0).get(it!!.start()).x() * imageWidth * scaleFactor,
-                        gestureRecognizerResult.landmarks().get(0).get(it.start()).y() * imageHeight * scaleFactor,
-                        gestureRecognizerResult.landmarks().get(0).get(it.end()).x() * imageWidth * scaleFactor,
-                        gestureRecognizerResult.landmarks().get(0).get(it.end()).y() * imageHeight * scaleFactor,
-                        linePaint)
+                HandLandmarker.HAND_CONNECTIONS.forEach { connection ->
+                    val startLandmark = gestureRecognizerResult.landmarks()[0][connection.start()]
+                    val endLandmark = gestureRecognizerResult.landmarks()[0][connection.end()]
+
+                    val startX = startLandmark.x() * imageWidth * scaleFactor - xOffset
+                    val startY = startLandmark.y() * imageHeight * scaleFactor
+                    val endX = endLandmark.x() * imageWidth * scaleFactor - xOffset
+                    val endY = endLandmark.y() * imageHeight * scaleFactor
+
+                    canvas.drawLine(startX, startY, endX, endY, linePaint)
                 }
             }
         }
+
+        Log.d("OverlayView", "scaleFactor: $scaleFactor")
+
+        Log.d("OverlayView", "Image Width: $imageWidth, Image Height: $imageHeight")
     }
 
     fun setResults(
         gestureRecognizerResult: GestureRecognizerResult,
         imageHeight: Int,
         imageWidth: Int,
-        runningMode: RunningMode = RunningMode.IMAGE
+        runningMode: RunningMode = RunningMode.LIVE_STREAM
     ) {
         results = gestureRecognizerResult
 
@@ -93,15 +104,17 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         scaleFactor = when (runningMode) {
             RunningMode.IMAGE,
             RunningMode.VIDEO -> {
-                min(width * 1f / imageWidth, height * 1f / imageHeight)
+                min(width.toFloat() / imageWidth, height.toFloat() / imageHeight)
             }
             RunningMode.LIVE_STREAM -> {
                 // PreviewView is in FILL_START mode. So we need to scale up the
                 // landmarks to match with the size that the captured images will be
                 // displayed.
-                max(width * -1f / imageWidth, height * -1f / imageHeight)
+                max(width.toFloat() / imageWidth, height.toFloat() / imageHeight)
             }
         }
+
+        Log.d("OverlayView", "Landmark at x: $x, y: $y")
         invalidate()
     }
 
